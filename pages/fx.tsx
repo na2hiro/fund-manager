@@ -3,6 +3,8 @@ import {FunctionComponent} from "react";
 import {Query} from "react-apollo";
 import {gql} from "apollo-boost";
 import {Alert, Spin, Table} from "antd";
+import FxInsert from "../components/fx/FxInsert";
+import * as React from "react";
 
 interface Prop {
 }
@@ -13,7 +15,7 @@ const priceRenderer = (price, record) => record.currencyFormatter.format(price);
 const valueRenderer = (price, record) => record.currencyValueFormatter.format(price);
 
 const Stock: FunctionComponent<Prop> = ({}) => {
-    return <Layout selectedMenu="stock">
+    return <Layout selectedMenu="fx">
         <h1>FX</h1>
 
         <Query query={gql`
@@ -130,6 +132,8 @@ const Stock: FunctionComponent<Prop> = ({}) => {
                 />;
             }}
         </Query>
+        <h2>Add transaction</h2>
+        <FxInsert />
     </Layout>;
 };
 

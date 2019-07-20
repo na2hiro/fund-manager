@@ -5,11 +5,10 @@ import {Query} from "react-apollo";
 import {gql} from "apollo-boost";
 import queryString from 'query-string';
 import cookie from 'isomorphic-cookie';
-import {FunctionComponent, ReactElement} from "react";
+import {FunctionComponent} from "react";
 import SubMenu from "antd/lib/menu/SubMenu";
 
 interface Props {
-    children: ReactElement,
     selectedMenu: string,
 }
 
