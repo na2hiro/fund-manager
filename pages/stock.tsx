@@ -39,7 +39,7 @@ const Stock: FunctionComponent<Prop> = ({}) => {
         `}>
             {({loading, error, data})=>{
                 if (loading) return <Spin />;
-                if (error) return <Alert message={error} type="error" />;
+                if (error) return <Alert message={error.toString()} type="error" />;
                 return <Table
                     dataSource={data.stock_balance
                         .map(row => ({

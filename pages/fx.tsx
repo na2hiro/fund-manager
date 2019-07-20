@@ -33,7 +33,7 @@ const Stock: FunctionComponent<Prop> = ({}) => {
         `}>
             {({loading, error, data})=>{
                 if(loading) return <Spin />;
-                if (error) return <Alert message={error} type="error" />;
+                if (error) return <Alert message={error.toString()} type="error" />;
                 return <Table
                     bordered
                     expandRowByClick={true}
@@ -82,7 +82,7 @@ const Stock: FunctionComponent<Prop> = ({}) => {
 }
                         `}>{({loading, error, data}) => {
                             if (loading) return <Spin/>;
-                            if (error) return <Alert message={error} type="error" />;
+                            if (error) return <Alert message={error.toString()} type="error" />;
                             return <Table
                                 bordered
                                 size="small"
