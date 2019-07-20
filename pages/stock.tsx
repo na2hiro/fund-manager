@@ -2,7 +2,7 @@ import Layout from "../components/Layout";
 import {FunctionComponent} from "react";
 import {Query} from "react-apollo";
 import {gql} from "apollo-boost";
-import {Table} from "antd";
+import {Alert, Spin, Table} from "antd";
 
 interface Prop {
 }
@@ -38,8 +38,8 @@ const Stock: FunctionComponent<Prop> = ({}) => {
 }
         `}>
             {({loading, error, data})=>{
-                if(loading) return "Loading";
-                if(error) return "error";
+                if (loading) return <Spin />;
+                if (error) return <Alert message={error} type="error" />;
                 return <Table
                     dataSource={data.stock_balance
                         .map(row => ({

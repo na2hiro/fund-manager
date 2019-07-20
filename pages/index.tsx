@@ -3,6 +3,7 @@ import Table from "../components/Table";
 import {FunctionComponent} from "react";
 import {gql} from "apollo-boost";
 import {Query} from "react-apollo";
+import {Alert, Spin} from "antd";
 
 interface Prop {
 }
@@ -21,8 +22,8 @@ const Portfolio: FunctionComponent<Prop> = ({}) => {
         }
         `}>
             {({loading, error, data})=>{
-                if(loading) return "Loading";
-                if(error) return "error";
+                if (loading) return <Spin/>;
+                if (error) return <Alert message={error} type="error" />;
                 return <Table data={data}/>;
             }}
         </Query>

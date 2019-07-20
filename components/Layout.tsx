@@ -6,6 +6,7 @@ import {gql} from "apollo-boost";
 import queryString from 'query-string';
 import cookie from 'isomorphic-cookie';
 import {FunctionComponent, ReactElement} from "react";
+import SubMenu from "antd/lib/menu/SubMenu";
 
 interface Props {
     children: ReactElement,
@@ -19,10 +20,15 @@ const Layout: FunctionComponent<Props> = ({children, selectedMenu}) => (
         <nav>
             <Menu mode="horizontal" selectedKeys={[selectedMenu]}>
                 <Menu.Item key="portfolio"><Link href="/"><a>
-                    <Icon type="info-circle" />
+                    <Icon type="pie-chart" />
                     Portfolio
                 </a></Link></Menu.Item>
-                <Menu.Item key="stock"><Link href="/stock"><a>Stock & ETF</a></Link></Menu.Item>
+                <SubMenu title={<><Icon type="account-book" />Balance</>}>
+                    <Menu.Item key="stock"><Link href="/stock"><a><Icon type="stock" />Stock & ETF</a></Link></Menu.Item>
+                    <Menu.Item key="fx"><Link href="/fx"><a><Icon type="transaction" />Cash / FX</a></Link></Menu.Item>
+                    <Menu.Item key="bond" disabled><Link href="/bond"><a><Icon type="red-envelope" />Bond</a></Link></Menu.Item>
+                    <Menu.Item key="commodities" disabled><Link href="/commodities"><a><Icon type="gold" />Commodities</a></Link></Menu.Item>
+                </SubMenu>
                 <Menu.Item key="loginout">
                     <Query query={gql`
                         {
@@ -60,7 +66,12 @@ const Layout: FunctionComponent<Props> = ({children, selectedMenu}) => (
                 </Menu.Item>
             </Menu>
         </nav>
-        {children}
+        <main>
+            <style jsx>{`
+                main { margin: 15px; }
+            `}</style>
+            {children}
+        </main>
         <footer>
             <a href="https://github.com/na2hiro/fund-manager">fund-manager by na2hiro</a>
         </footer>
