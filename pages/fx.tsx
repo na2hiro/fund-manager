@@ -39,10 +39,10 @@ const Stock: FunctionComponent<Prop> = ({}) => {
                 return <Table
                     bordered
                     expandRowByClick={true}
+                    rowKey={(row) => row.currency_pair.long_currency + "_" + row.currency_pair.short_currency}
                     dataSource={data.currency_balance
                         .map(row => ({
                             ...row,
-                            id: row.currency_pair.long_currency + "_" + row.currency_pair.short_currency,
                             currencyFormatter: new Intl.NumberFormat('ja-JP', {
                                 style: "currency",
                                 currency: row.currency_pair.short_currency,

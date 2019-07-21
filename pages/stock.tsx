@@ -41,10 +41,10 @@ const Stock: FunctionComponent<Prop> = ({}) => {
                 if (loading) return <Spin />;
                 if (error) return <Alert message={error.toString()} type="error" />;
                 return <Table
+                    rowKey={(row) => row.stock.id}
                     dataSource={data.stock_balance
                         .map(row => ({
                             ...row,
-                            id: row.stock.id,
                             currencyFormatter: new Intl.NumberFormat('ja-JP', {style: "currency", currency: row.stock.stock_market.currency}),
                         }))}
                     columns={[
