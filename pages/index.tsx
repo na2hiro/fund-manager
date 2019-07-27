@@ -13,13 +13,25 @@ const Portfolio: FunctionComponent<Prop> = ({}) => {
         <h1>Portfolio</h1>
 
         <Query query={gql`
-        {
-            assets_by_class_in_jpy {
-                effective_currency
-                name
-                current_value_jpy
-            }
-        }
+{
+  assets_by_class_in_jpy {
+    effective_currency
+    name
+    current_value_jpy
+  }
+  currency: portfolio_aggregate(where: {axis: {_eq: "currency"}}) {
+    nodes {
+      ratio
+      type
+    }
+  }
+  class: portfolio_aggregate(where: {axis: {_eq: "class"}}) {
+    nodes {
+      ratio
+      type
+    }
+  }
+}
         `}>
             {({loading, error, data})=>{
                 if (loading) return <Spin/>;

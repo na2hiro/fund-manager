@@ -3,7 +3,7 @@ import {RadialChart} from 'react-vis';
 
 const Table = ({data}) => {
     // TODO memoize
-    const [valueMatrix, currencies, names, sumsCurrencies, sumsNames] = useMemo(() => {
+    const [valueMatrix, currencies, names, sumsCurrencies, sumsNames, currencyTargetRatios, classTargetRatios] = useMemo(() => {
         const assets = data.assets_by_class_in_jpy;
         const currencies = uniq(assets.map((v => v.effective_currency)));
         const names = uniq(assets.map((v => v.name)));
@@ -44,7 +44,11 @@ const Table = ({data}) => {
         assets.forEach(asset => {
             valueMatrix[sortedNames.indexOf(asset.name)][sortedCurrencies.indexOf(asset.effective_currency)] = asset.current_value_jpy
         });
-        return [valueMatrix, sortedCurrencies, sortedNames, sortedSumsCurrencies, sortedSumsNames];
+
+        const currencyTargetRatios = sortedCurrencies.map(currency => (data.currency.nodes.filter(node => node.type==currency)[0] || {}).ratio);
+        const classTargetRatios = sortedNames.map(name => (data.class.nodes.filter(node => node.type==name)[0] || {}).ratio);
+
+        return [valueMatrix, sortedCurrencies, sortedNames, sortedSumsCurrencies, sortedSumsNames, currencyTargetRatios, classTargetRatios];
     }, data);
     const sumAll = useMemo(() => {
         return sumsCurrencies.reduce((a,b)=>a+b, 0);
@@ -56,6 +60,7 @@ const Table = ({data}) => {
     });
     const percentageFormatter = new Intl.NumberFormat('ja-JP', {
         style: 'percent',
+        minimumFractionDigits: 1
     });
 
     const chartConfig = {
@@ -76,19 +81,29 @@ const Table = ({data}) => {
             <thead>
                 <th></th>
                 <th></th>
+                <th></th>
                 {currencies.map(currency => <th key={currency}>{currency}</th>)}
                 <th></th>
             </thead>
             <tbody>
             <tr>
                 <th></th>
+                <td>Target</td>
                 <td></td>
+                {currencyTargetRatios.map((ratio, i)=><td key={i}>{percentageFormatter.format(ratio)}</td>)}
+                <td></td>
+            </tr>
+            <tr>
+                <th></th>
+                <td></td>
+                <td>Reality</td>
                 {sumsCurrencies.map((sum, i)=><td key={i}>{percentageFormatter.format(sum / sumAll)}</td>)}
                 <td></td>
             </tr>
             {valueMatrix.map((row, i) =>
                 <tr>
                     <th>{names[i]}</th>
+                    <td>{percentageFormatter.format(classTargetRatios[i])}</td>
                     <td>{percentageFormatter.format(sumsNames[i] / sumAll)}</td>
                     {row.map((cell, i) => <td key={i}>{currencyFormatter.format(cell)}</td>)}
                     <td>{currencyFormatter.format(sumsNames[i])}</td>
@@ -96,6 +111,7 @@ const Table = ({data}) => {
             )}
             <tr>
                 <th></th>
+                <td></td>
                 <td></td>
                 {sumsCurrencies.map(sum=><td>{currencyFormatter.format(sum)}</td>)}
                 <td>{currencyFormatter.format(sumAll)}</td>

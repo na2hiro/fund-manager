@@ -27,7 +27,6 @@ const FxInsertForm = ({form}) => {
                 let variables = form.getFieldsValue();
                 variables.date = variables.date.format("YYYY-MM-DD");
                 variables.currency_pair_id = parseInt(variables.currency_pair_id);
-                console.log(variables, form);
                 insertFx({variables});
                 form.setFieldsValue({price: "", amount: ""})
             }}>
