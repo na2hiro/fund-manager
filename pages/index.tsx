@@ -94,8 +94,8 @@ interface PortfolioProps {
     sumAll: number,
     currencyTargetRatios: number[],
     classTargetRatios: number[],
-    diffMap: Diff,
-    dispatchDiffMap: DispatchDiff;
+    diff: Diff,
+    dispatchDiff: DispatchDiff;
 }
 
 interface Props {

@@ -1,6 +1,7 @@
 import ApolloClient from "apollo-boost";
 import cookie from "isomorphic-cookie";
 import {ApolloProvider} from "react-apollo";
+import {ApolloProvider as ApolloHooksProvider} from "react-apollo-hooks";
 import fetch from 'isomorphic-unfetch';
 
 let jwt = cookie.load("jwt"/*, req*/);
@@ -14,7 +15,9 @@ const client = new ApolloClient({
 
 const App = ({Component, pageProps}) => (
     <ApolloProvider client={client}>
-        <Component {...pageProps} />
+        <ApolloHooksProvider client={client}>
+            <Component {...pageProps} />
+        </ApolloHooksProvider>
     </ApolloProvider>
 );
 
