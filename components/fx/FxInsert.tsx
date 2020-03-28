@@ -15,33 +15,31 @@ mutation ($amount: Int, $date: date, $price: numeric, $currency_pair_id: Int) {
 }
 `;
 
-const FxInsertForm = ({form}) => {
-    const {getFieldDecorator} = form;
+const FxInsert = () => {
     const [insertFx, {data}] = useMutation(INSERT_FX);
     return (
-        <Form layout="inline" className="ant-advanced-search-form" onSubmit={(e) => {
+        <Form layout="inline" className="ant-advanced-search-form" onFinish={(variables) => {
             e.preventDefault();
             // TODO validation
             /*form.validateFields((err, values) => {
                 console.log('Received values of form: ', values, err);
             });*/
-            let variables = form.getFieldsValue();
             variables.date = variables.date.format("YYYY-MM-DD");
             variables.currency_pair_id = parseInt(variables.currency_pair_id);
             insertFx({variables});
             form.setFieldsValue({price: "", amount: ""})
-        }}>
-            <Form.Item>
-                {getFieldDecorator("date", {initialValue: moment()})(<DatePicker />)}
+        }} initialValues={{date: moment()}}>
+            <Form.Item name="date">
+                <DatePicker />
             </Form.Item>
-            <Form.Item>
-                <FxCurrencyDropdown getFieldDecorator={getFieldDecorator} />
+            <Form.Item name="currency_pair_id">
+                <FxCurrencyDropdown />
             </Form.Item>
-            <Form.Item>
-                {getFieldDecorator("price")(<InputNumber placeholder="price"/>)}
+            <Form.Item name="price" rules={[{required: true}]}>
+                <InputNumber placeholder="price"/>
             </Form.Item>
-            <Form.Item>
-                {getFieldDecorator("amount")(<InputNumber placeholder="amount"/>)}
+            <Form.Item name="amount">
+                <InputNumber placeholder="amount"/>
             </Form.Item>
             <Form.Item>
                 <Button type="primary" htmlType="submit">
@@ -52,8 +50,6 @@ const FxInsertForm = ({form}) => {
     );
 };
 
-const FxInsert = Form.create()(FxInsertForm);
-
 const LIST_CURRENCIES = gql`
 {
   currency_pair {
@@ -63,9 +59,9 @@ const LIST_CURRENCIES = gql`
   }
 }`;
 
-const FxCurrencyDropdown = ({getFieldDecorator}) => {
+const FxCurrencyDropdown = () => {
     const {loading, error, data} = useQuery(LIST_CURRENCIES);
-    return loadingOrError({loading, error}) || getFieldDecorator("currency_pair_id", {rules: [{required: true}]})(<Select
+    return loadingOrError({loading, error}) || <Select
         showSearch
         filterOption={(input, option) =>
             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -76,7 +72,7 @@ const FxCurrencyDropdown = ({getFieldDecorator}) => {
         {data.currency_pair.map(row => <Select.Option key={row.id}>
             {row.long_currency + row.short_currency}
         </Select.Option>)}
-    </Select>)
+    </Select>;
 };
 
 export default FxInsert;

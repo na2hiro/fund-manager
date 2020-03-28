@@ -62,16 +62,16 @@ const FxSummary = () => {
             });
             return <tr>
                 <th></th>
-                <th>total</th>
+                <th style={{textAlign: "right"}}>total</th>
                 <th></th>
                 <th></th>
                 <th></th>
-                <th>{currencyValueFormatter(totalValue)}</th>
-                <th>{currencyValueFormatter(totalProfit)}</th>
+                <th style={{textAlign: "right"}}>{currencyValueFormatter.format(totalValue)}</th>
+                <th style={{textAlign: "right"}}>{currencyValueFormatter.format(totalProfit)}</th>
             </tr>
         }}
         columns={[
-            {dataIndex: "currency_pair.long_currency", align: "right", title: "Name"},
+            {dataIndex: ["currency_pair", "long_currency"], align: "right", title: "Name"},
             {dataIndex: "amount", align: "right", title: "Amount", render: (number)=>numberFormatter.format(number)},
             {
                 title: "Average acquire",

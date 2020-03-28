@@ -47,7 +47,7 @@ const Stock: FunctionComponent<Prop> = ({}) => {
                         currencyFormatter: new Intl.NumberFormat('ja-JP', {style: "currency", currency: row.stock.stock_market.currency}),
                     }))}
                 columns={[
-                    {dataIndex: "stock.name", align: "right", title: "Name"},
+                    {dataIndex: ["stock", "name"], align: "right", title: "Name"},
                     {dataIndex: "amount", align: "right", title: "Amount", render: (number)=>numberFormatter.format(number)},
                     {dataIndex: "average_price", align: "right", title: "Average acquire price", render: (price, record)=> record.currencyFormatter.format(price)},
                     {dataIndex: "current_price", align: "right", title: "Current price", render: (price, record)=> record.currencyFormatter.format(price)},

@@ -58,7 +58,7 @@ const Stock: FunctionComponent<Prop> = ({}) => {
                     currencyFormatter: new Intl.NumberFormat('ja-JP', {style: "currency", currency: row.bond.currency}),
                 }))}
             columns={[
-                {dataIndex: "bond.name", title: "Name"},
+                {dataIndex: ["bond", "name"], title: "Name"},
                 {
                     title: "Buy",
                     children: [
