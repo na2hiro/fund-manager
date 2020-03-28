@@ -1,4 +1,5 @@
-import {FunctionComponent, useMemo} from 'react';
+import {FunctionComponent} from 'react';
+import { percentageFormatter, currencyFormatter } from '../utils/formatter';
 
 interface Props {
     valueMatrix: number[][],
@@ -21,15 +22,6 @@ const PortfolioTable: FunctionComponent<Props> = ({
         currencyTargetRatios,
         classTargetRatios
     }) => {
-
-    const currencyFormatter = new Intl.NumberFormat('ja-JP', {
-        style: 'currency',
-        currency: 'JPY'
-    });
-    const percentageFormatter = new Intl.NumberFormat('ja-JP', {
-        style: 'percent',
-        minimumFractionDigits: 1
-    });
 
     return <>
         <table>

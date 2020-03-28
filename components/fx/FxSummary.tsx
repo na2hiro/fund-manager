@@ -2,15 +2,18 @@ import { gql } from "apollo-boost";
 import { Table } from "antd";
 import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../../utils/apolloUtils";
+import { currencyValueFormatter } from "../../utils/formatter";
 
 // TODO 
 type Record = {
     currencyFormatter: Intl.NumberFormat;
     currencyValueFormatter: Intl.NumberFormat;
+    date: string;
+    price: number;
+    amount: number;
 }
 
-const numberFormatter = new Intl.NumberFormat('ja-JP', {
-});
+const numberFormatter = new Intl.NumberFormat('ja-JP', { });
 const priceRenderer = (price: number, record: Record) => record.currencyFormatter.format(price);
 const valueRenderer = (price: number, record: Record) => record.currencyValueFormatter.format(price);
 
@@ -49,6 +52,24 @@ const FxSummary = () => {
                     minimumFractionDigits: 0,
                 }),
             }))}
+        summary={pageData =>{
+            console.log("summary")
+            let totalValue = 0;
+            let totalProfit = 0;
+            pageData.forEach(({current_value, current_profit}) => {
+                totalValue+=current_value;
+                totalProfit+=current_profit;
+            });
+            return <tr>
+                <th></th>
+                <th>total</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>{currencyValueFormatter(totalValue)}</th>
+                <th>{currencyValueFormatter(totalProfit)}</th>
+            </tr>
+        }}
         columns={[
             {dataIndex: "currency_pair.long_currency", align: "right", title: "Name"},
             {dataIndex: "amount", align: "right", title: "Amount", render: (number)=>numberFormatter.format(number)},
@@ -71,9 +92,12 @@ const FxSummary = () => {
     />
 }
 
-const GET_SUMMARY_TRANSACTION = gql`
-query getSummaryTransaction($long_currency: String!, $short_currency: String!){
-    currency_trade(where: {currency_pair: {long_currency: {_eq: $long_currency}, short_currency: {_eq: $short_currency}}}) {
+const GET_TRADES_FOR_CURRENCY = gql`
+query getTradeForCurrency($long_currency: String!, $short_currency: String!){
+    currency_trade(
+        where: {currency_pair: {long_currency: {_eq: $long_currency}, short_currency: {_eq: $short_currency}}},
+        order_by: {date: desc}
+    ) {
         date
         price
         amount
@@ -82,7 +106,7 @@ query getSummaryTransaction($long_currency: String!, $short_currency: String!){
 }`;
 
 const FxSummaryExpanded  = ({record}) => {
-    const {loading, error, data} = useQuery(GET_SUMMARY_TRANSACTION, {
+    const {loading, error, data} = useQuery(GET_TRADES_FOR_CURRENCY, {
         variables: {
             long_currency: record.currency_pair.long_currency,
             short_currency: record.currency_pair.short_currency,
@@ -91,7 +115,7 @@ const FxSummaryExpanded  = ({record}) => {
     return loadingOrError({loading, error}) || <Table
         bordered
         size="small"
-        title={() => <>Transaction</>}
+        title={() => <>Trades</>}
         dataSource={data.currency_trade
             .map((row: { id: any; }) => ({
                 ...row,
@@ -108,18 +132,25 @@ const FxSummaryExpanded  = ({record}) => {
                 }),
             }))}
         columns={[
-            {dataIndex: "date", title: "Date"},
             {
-                dataIndex: "amount",
-                align: "right",
-                title: "Amount",
-                render: (number) => numberFormatter.format(number),
+                dataIndex: "date",
+                title: "Date",
+                sorter: (a, b) => a.date < b.date ? -1 : 1,
+                defaultSortOrder: "descend"
             },
             {
                 dataIndex: "price",
                 align: "right",
                 title: "Price",
                 render: priceRenderer,
+                sorter: (a, b) => a.price - b.price,
+            },
+            {
+                dataIndex: "amount",
+                align: "right",
+                title: "Amount",
+                render: (number) => numberFormatter.format(number),
+                sorter: (a, b) => a.amount - b.amount,
             },
             {
                 dataIndex: "price",
@@ -127,6 +158,7 @@ const FxSummaryExpanded  = ({record}) => {
                 align: "right",
                 title: "Value",
                 render: (price, record) => record.currencyValueFormatter.format(price*record.amount),
+                sorter: (a, b) => a.amount*a.price - b.amount*b.price,
             },
         ]}
     />

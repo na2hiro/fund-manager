@@ -1,6 +1,7 @@
 import React, {FunctionComponent} from 'react';
 import {InputNumber} from "antd";
 import {Diff, DispatchDiff} from "../hooks/useDiff";
+import { currencyFormatter } from '../utils/formatter';
 
 interface Props {
     diff: Diff,
@@ -27,14 +28,6 @@ const PortfolioDiffTable: FunctionComponent<Props> = (props) => {
         diffsCurrencies,
         diffsNames,
     } = props;
-    const currencyFormatter = new Intl.NumberFormat('ja-JP', {
-        style: 'currency',
-        currency: 'JPY'
-    });
-    const percentageFormatter = new Intl.NumberFormat('ja-JP', {
-        style: 'percent',
-        minimumFractionDigits: 1
-    });
 
     return (
         <table>

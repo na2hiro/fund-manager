@@ -29,12 +29,10 @@ const Layout: FunctionComponent<Props> = ({children, selectedMenu}) => {
                     <Icon type="pie-chart" />
                     Portfolio
                 </a></Link></Menu.Item>
-                <SubMenu title={<><Icon type="account-book" />Balance</>}>
-                    <Menu.Item key="stock"><Link href="/stock"><a><Icon type="stock" />Stock & ETF</a></Link></Menu.Item>
-                    <Menu.Item key="fx"><Link href="/fx"><a><Icon type="transaction" />Cash / FX</a></Link></Menu.Item>
-                    <Menu.Item key="bond"><Link href="/bond"><a><Icon type="red-envelope" />Bond</a></Link></Menu.Item>
-                    <Menu.Item key="commodities" disabled><Link href="/commodities"><a><Icon type="gold" />Commodities</a></Link></Menu.Item>
-                </SubMenu>
+                <Menu.Item key="stock"><Link href="/stock"><a><Icon type="stock" />Stock & ETF</a></Link></Menu.Item>
+                <Menu.Item key="fx"><Link href="/fx"><a><Icon type="transaction" />Cash / FX</a></Link></Menu.Item>
+                <Menu.Item key="bond"><Link href="/bond"><a><Icon type="red-envelope" />Bond</a></Link></Menu.Item>
+                <Menu.Item key="commodities" disabled><Link href="/commodities"><a><Icon type="gold" />Commodities</a></Link></Menu.Item>
                 <Menu.Item key="loginout" style={{float: "right"}}>
                     <LogInOut />
                 </Menu.Item>

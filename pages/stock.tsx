@@ -38,6 +38,7 @@ const Stock: FunctionComponent<Prop> = ({}) => {
     const {loading, error, data} = useQuery(STOCK_BALANCE);
     return <Layout selectedMenu="stock">
         <h1>Stock</h1>
+        <h2>Summary</h2>
         {loadingOrError({loading, error}) || <Table
                 rowKey={(row) => row.stock.id}
                 dataSource={data.stock_balance
@@ -54,6 +55,7 @@ const Stock: FunctionComponent<Prop> = ({}) => {
                     {dataIndex: "current_profit", align: "right", title: "Current profit", render: (price, record)=> record.currencyFormatter.format(price)},
                 ]}/>
         }
+        <h2>Trades</h2>
     </Layout>;
 };
 
