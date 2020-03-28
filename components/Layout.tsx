@@ -1,19 +1,26 @@
 import Link from "next/link";
 import {Menu, Icon} from 'antd';
 import 'antd/dist/antd.css';
-import {Query} from "react-apollo";
 import {gql} from "apollo-boost";
 import queryString from 'query-string';
 import cookie from 'isomorphic-cookie';
 import {FunctionComponent} from "react";
 import SubMenu from "antd/lib/menu/SubMenu";
+import { useQuery } from "react-apollo-hooks";
 
 interface Props {
     selectedMenu: string,
 }
 
-const Layout: FunctionComponent<Props> = ({children, selectedMenu}) => (
-    <>
+const ASSET_BY_CLASS_IN_JPY = gql`
+{
+    assets_by_class_in_jpy(limit: 0) {
+        name
+    }
+}`;
+
+const Layout: FunctionComponent<Props> = ({children, selectedMenu}) => {
+    return <>
         <header>
         </header>
         <nav>
@@ -28,39 +35,8 @@ const Layout: FunctionComponent<Props> = ({children, selectedMenu}) => (
                     <Menu.Item key="bond"><Link href="/bond"><a><Icon type="red-envelope" />Bond</a></Link></Menu.Item>
                     <Menu.Item key="commodities" disabled><Link href="/commodities"><a><Icon type="gold" />Commodities</a></Link></Menu.Item>
                 </SubMenu>
-                <Menu.Item key="loginout">
-                    <Query query={gql`
-                        {
-                            assets_by_class_in_jpy(limit: 0) {
-                                name
-                            }
-                        }
-                    `}>
-                        {({loading, error, data}) => {
-                            if (loading) return "";
-                            if (error) {
-                                const url = `https://dev--f2asibj.auth0.com/login?${queryString.stringify({
-                                    client: "2WDgaVybZzReNIKoZ8cuMsv2W08Wf53Y",
-                                    protocol: "oauth2",
-                                    response_type: "token id_token",
-                                    redirect_uri: location.protocol + "//" + location.host + "/callback",
-                                    scope: "openid profile",
-                                })}`;
-                                return <a
-                                    href={url}
-                                    onClick={(e) => {
-                                        localStorage.setItem("callbackUrl", location.href);
-                                        e.stopPropagation();
-                                        location.href = url;
-                                    }}><Icon type="login" />Log in</a>
-                            } else {
-                                return <a href="#" onClick={() => {
-                                    cookie.remove("jwt");
-                                    location.href = "/";
-                                }}><Icon type="logout" />Log out</a>
-                            }
-                        }}
-                    </Query>
+                <Menu.Item key="loginout" style={{float: "right"}}>
+                    <LogInOut />
                 </Menu.Item>
             </Menu>
         </nav>
@@ -74,6 +50,32 @@ const Layout: FunctionComponent<Props> = ({children, selectedMenu}) => (
             <a href="https://github.com/na2hiro/fund-manager">fund-manager by na2hiro</a>
         </footer>
     </>
-);
+};
+
+const LogInOut = () => {
+    const {loading, error, data} = useQuery(ASSET_BY_CLASS_IN_JPY);
+    if (loading) return <></>;
+    if (error) {
+        const url = `https://dev--f2asibj.auth0.com/login?${queryString.stringify({
+            client: "2WDgaVybZzReNIKoZ8cuMsv2W08Wf53Y",
+            protocol: "oauth2",
+            response_type: "token id_token",
+            redirect_uri: location.protocol + "//" + location.host + "/callback",
+            scope: "openid profile",
+        })}`;
+        return <a
+            href={url}
+            onClick={(e) => {
+                localStorage.setItem("callbackUrl", location.href);
+                e.stopPropagation();
+                location.href = url;
+            }}><Icon type="login" />Log in</a>
+    } else {
+        return <a href="#" onClick={() => {
+            cookie.remove("jwt");
+            location.href = "/";
+        }}><Icon type="logout" />Log out</a>
+    }
+}
 
 export default Layout;
