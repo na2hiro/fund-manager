@@ -6,7 +6,7 @@ import { loadingOrError } from "../../utils/apolloUtils";
 import { numberFormatter } from "../../utils/formatter";
 import { StockBalance, StockBalance_stock_balance } from "../../__generated__/StockBalance";
 import StockTrades from "./StockTrades";
-
+import LinkToChartModal from "../LinkToChartModal";
 
 const STOCK_BALANCE = gql`
 query StockBalance{
@@ -15,6 +15,7 @@ query StockBalance{
       id
       name
       stock_market {
+        id
         currency
       }
       effective_currency
@@ -43,7 +44,11 @@ const StockSummary = () => {
                 currencyFormatter: new Intl.NumberFormat('ja-JP', { style: "currency", currency: row.stock!.stock_market.currency }),
             }))}
         columns={[
-            { dataIndex: ["stock", "name"], align: "right", title: "Name" },
+            {
+                dataIndex: ["stock", "name"],
+                 align: "right",
+                 title: "Name",
+                 render: (name, record) => <LinkToChartModal name={name} symbol={ `${record.stock!.stock_market.id}:${record.stock!.symbol}`} /> },
             { dataIndex: "amount", align: "right", title: "Amount", render: (number) => numberFormatter.format(number) },
             {title: "Average acquire", children: [
                 { dataIndex: "average_price", align: "right", title: "Price", render: (price, record) => record.currencyFormatter.format(price) },
@@ -55,7 +60,6 @@ const StockSummary = () => {
             ]},
         ]} />;
 }
-
 
 
 export default StockSummary;

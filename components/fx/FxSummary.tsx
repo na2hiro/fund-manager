@@ -6,6 +6,7 @@ import { currencyValueFormatter, numberFormatter, priceRenderer, valueRenderer }
 import { GetSummary, GetSummary_currency_balance } from "../../__generated__/GetSummary";
 import { FunctionComponent } from "react";
 import FxTrades from "./FxTrades";
+import LinkToChartModal from "../LinkToChartModal";
 
 const GET_SUMMARY = gql`
 query GetSummary {
@@ -61,7 +62,12 @@ const FxSummary: FunctionComponent<{}> = () => {
             </tr>
         }}
         columns={[
-            {dataIndex: ["currency_pair", "long_currency"], align: "right", title: "Name"},
+            {
+                dataIndex: ["currency_pair", "long_currency"],
+                align: "right",
+                title: "Name",
+                render: (long_currency, record) => <LinkToChartModal name={`${long_currency}${record.currency_pair?.short_currency}`} symbol={`${long_currency}${record.currency_pair?.short_currency}`} />
+            },
             {dataIndex: "amount", align: "right", title: "Amount", render: (number)=>numberFormatter.format(number)},
             {
                 title: "Average acquire",

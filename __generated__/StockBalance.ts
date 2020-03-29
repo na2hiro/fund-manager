@@ -9,6 +9,7 @@
 
 export interface StockBalance_stock_balance_stock_stock_market {
   __typename: "stock_market";
+  id: string;
   currency: string;
 }
 

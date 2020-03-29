@@ -9,6 +9,7 @@
 
 export interface GetStockTrades_stock_trade_with_evaluation_stock_stock_market {
   __typename: "stock_market";
+  id: string;
   currency: string;
 }
 
@@ -20,6 +21,7 @@ export interface GetStockTrades_stock_trade_with_evaluation_stock_type {
 export interface GetStockTrades_stock_trade_with_evaluation_stock {
   __typename: "stock";
   name: string;
+  symbol: string;
   effective_currency: string | null;
   /**
    * An object relationship

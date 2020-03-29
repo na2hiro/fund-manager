@@ -5,6 +5,7 @@ import { loadingOrError } from "../../utils/apolloUtils";
 import { Table } from "antd";
 import {GetTrade, GetTrade_currency_trade} from "../../__generated__/GetTrade";
 import { priceRenderer, numberFormatter } from "../../utils/formatter";
+import LinkToChartModal from "../LinkToChartModal";
 
 const PER_PAGE = 10;
 
@@ -79,7 +80,10 @@ const FxTrades: FunctionComponent<Props> = ({currencyPairId}) => {
                 dataIndex: "currency_pair",
                 align: "right",
                 title: "Name",
-                render: (currency_pair) => currency_pair.long_currency+currency_pair.short_currency,
+                render: (currency_pair) => {
+                    const currencyPair = currency_pair.long_currency + currency_pair.short_currency;
+                    return <LinkToChartModal name={currencyPair} symbol={currencyPair} />;
+                },
             },
             {
                 dataIndex: "price",

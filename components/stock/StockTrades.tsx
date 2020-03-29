@@ -5,6 +5,7 @@ import { loadingOrError } from "../../utils/apolloUtils";
 import { Table } from "antd";
 import { GetStockTrades, GetStockTrades_stock_trade_with_evaluation } from "../../__generated__/GetStockTrades";
 import { numberFormatter, currencyValueFormatter } from "../../utils/formatter";
+import LinkToChartModal from "../LinkToChartModal";
 
 const PER_PAGE = 10;
 
@@ -21,8 +22,10 @@ query GetStockTrades($stock_id: Int, $offset: Int, $perPage: Int) {
     price
     stock {
       name
+      symbol
       effective_currency
       stock_market {
+        id
         currency
       }
       type {
@@ -97,6 +100,7 @@ const StockTrades: FunctionComponent<Props> = ({stockId}) => {
                 dataIndex: ["stock", "name"],
                 align: "right",
                 title: "Name",
+                render: (name, record) => <LinkToChartModal name={name} symbol={ `${record.stock!.stock_market.id}:${record.stock!.symbol}`} />
             },
             {
                 dataIndex: "amount",
