@@ -49,4 +49,5 @@ export interface GetTrade {
 export interface GetTradeVariables {
   offset?: number | null;
   perPage?: number | null;
+  currency_pair_id?: number | null;
 }

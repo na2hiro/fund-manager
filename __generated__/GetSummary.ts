@@ -9,6 +9,7 @@
 
 export interface GetSummary_currency_balance_currency_pair {
   __typename: "currency_pair";
+  id: number;
   long_currency: string;
   short_currency: string;
 }

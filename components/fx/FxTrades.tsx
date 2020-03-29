@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, FunctionComponent } from "react";
 import { gql } from "apollo-boost";
 import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../../utils/apolloUtils";
@@ -9,8 +9,11 @@ import { priceRenderer, numberFormatter } from "../../utils/formatter";
 const PER_PAGE = 10;
 
 const GET_TRADES = gql`
-query GetTrade ($offset: Int, $perPage: Int) {
-  currency_trade(limit: $perPage, offset: $offset, order_by: {date: desc}) {
+query GetTrade ($offset: Int, $perPage: Int, $currency_pair_id: Int) {
+  currency_trade(
+    limit: $perPage, offset: $offset, order_by: {date: desc},
+    where: {currency_pair_id: {_eq: $currency_pair_id}},
+  ) {
     date
     amount
     id
@@ -20,7 +23,9 @@ query GetTrade ($offset: Int, $perPage: Int) {
       short_currency
     }
   }
-  currency_trade_aggregate {
+  currency_trade_aggregate (
+    where: {currency_pair_id: {_eq: $currency_pair_id}}
+  ) {
     aggregate {
       count
     }
@@ -28,8 +33,12 @@ query GetTrade ($offset: Int, $perPage: Int) {
 }
 `;
 
+type Props = {
+    currencyPairId?: number;
+}
+
 // pagination https://ant.design/components/table/#components-table-demo-ajax
-const FxTrades = () => {
+const FxTrades: FunctionComponent<Props> = ({currencyPairId}) => {
     const [page, setPage] = useState(1);
     const onChangeTable = useCallback((pagination, filters, sorter) =>{
         setPage(pagination.current);
@@ -37,13 +46,13 @@ const FxTrades = () => {
     const {loading, error, data} = useQuery<GetTrade>(GET_TRADES, {
         variables: {
             offset: (page-1)*PER_PAGE,
-            perPage: PER_PAGE
+            perPage: PER_PAGE,
+            currency_pair_id: currencyPairId
         }
     });
     return loadingOrError({loading, error}) || <Table
         bordered
         size="small"
-        title={() => <>Trades</>}
         pagination={{
             total: data!.currency_trade_aggregate!.aggregate!.count!,
             current: page

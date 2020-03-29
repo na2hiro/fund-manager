@@ -1,75 +1,97 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, FunctionComponent } from "react";
 import { gql } from "apollo-boost";
 import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../../utils/apolloUtils";
 import { Table } from "antd";
-import { GetStockTrades, GetStockTrades_stock_trade } from "../../__generated__/GetStockTrades";
-import { numberFormatter, priceRenderer } from "../../utils/formatter";
+import { GetStockTrades, GetStockTrades_stock_trade_with_evaluation } from "../../__generated__/GetStockTrades";
+import { numberFormatter, currencyValueFormatter } from "../../utils/formatter";
 
 const PER_PAGE = 10;
 
 const GET_TRADES = gql`
-query GetStockTrades ($offset: Int, $perPage: Int) {
-  stock_trade(limit: $perPage, offset: $offset, order_by: {date: desc}) {
+query GetStockTrades($stock_id: Int, $offset: Int, $perPage: Int) {
+  stock_trade_with_evaluation(limit: $perPage, offset: $offset, order_by: {date: desc}, where: {stock_id: {_eq: $stock_id}}) {
     id
-    amount
-    date
+    acquired_currency_date
+    acquired_currency_price
+    latest_currency_date
+    latest_currency_price
+    latest_stock_date
+    latest_stock_price
     price
     stock {
-      effective_currency
       name
-      type {
-        name
-      }
+      effective_currency
       stock_market {
         currency
       }
+      type {
+        name
+      }
     }
+    amount
+    date
   }
-  stock_trade_aggregate {
+  stock_trade_with_evaluation_aggregate(where: {stock_id: {_eq: $stock_id}}) {
     aggregate {
       count
     }
   }
+}`;
+
+type Props = {
+    stockId?: number;
 }
-`;
 
 // pagination https://ant.design/components/table/#components-table-demo-ajax
-const StockTrades = () => {
+const StockTrades: FunctionComponent<Props> = ({stockId}) => {
     const [page, setPage] = useState(1);
     const onChangeTable = useCallback((pagination, filters, sorter) =>{
+        // TODO sort needs to be handled properly to show correct sort result
         setPage(pagination.current);
     }, []);
     const {loading, error, data} = useQuery<GetStockTrades>(GET_TRADES, {
         variables: {
             offset: (page-1)*PER_PAGE,
-            perPage: PER_PAGE
+            perPage: PER_PAGE,
+            stock_id: stockId
         }
     });
     return loadingOrError({loading, error}) || <Table
         bordered
         size="small"
-        title={() => <>Trades</>}
         pagination={{
-            total: data!.stock_trade_aggregate.aggregate!.count!,
+            total: data!.stock_trade_with_evaluation_aggregate.aggregate!.count!,
             current: page
         }}
         onChange={onChangeTable}
-        dataSource={data!.stock_trade
-            .map((row: GetStockTrades_stock_trade) => ({
-                ...row,
-                id: row.id,
-                currencyFormatter: new Intl.NumberFormat('ja-JP', {
-                    style: "currency",
-                    currency: row.stock.stock_market.currency,
-                    minimumFractionDigits: 2,
-                }),
-                currencyValueFormatter: new Intl.NumberFormat('ja-JP', {
-                    style: "currency",
-                    currency: row.stock.stock_market.currency,
-                    minimumFractionDigits: 0,
-                }),
-            }))}
+        dataSource={data!.stock_trade_with_evaluation
+            .map((row: GetStockTrades_stock_trade_with_evaluation) => {
+                const value = row.price*row.amount!;
+                const value_jpy = value*castAcquiredPrice(row.acquired_currency_price, row.stock!.stock_market.currency);
+                const latest_stock_value = row.latest_stock_price!*row.amount!;
+                const latest_stock_value_jpy = latest_stock_value*castAcquiredPrice(row.latest_currency_price, row.stock!.stock_market.currency);
+                const profit_jpy = latest_stock_value_jpy - value_jpy;
+                return {
+                    ...row,
+                    id: row.id,
+                    value,
+                    value_jpy,
+                    latest_stock_value,
+                    latest_stock_value_jpy,
+                    profit_jpy,
+                    currencyFormatter: new Intl.NumberFormat('ja-JP', {
+                        style: "currency",
+                        currency: row.stock!.stock_market.currency,
+                        minimumFractionDigits: 2,
+                    }),
+                    currencyValueFormatter: new Intl.NumberFormat('ja-JP', {
+                        style: "currency",
+                        currency: row.stock!.stock_market.currency,
+                        minimumFractionDigits: 0,
+                    }),
+                };
+            })}
         columns={[
             {
                 dataIndex: ["stock", "name"],
@@ -81,38 +103,79 @@ const StockTrades = () => {
                 align: "right",
                 title: "Amount",
                 render: (number) => numberFormatter.format(number),
+                sorter: (a, b) => a.amount! - b.amount!,
             },
             {title: "Acquire", children: [
-                {dataIndex: "date", title: "Date", align: "right"},
+                {
+                    dataIndex: "date",
+                    title: "Date",
+                    align: "right",
+                    sorter: (a, b) => a.date < b.date ? -1 : 1,
+                    defaultSortOrder: "descend"
+                },
                 {
                     dataIndex: "price",
                     align: "right",
                     title: "Price",
-                    render: priceRenderer,
+                    render: (price, record) => record.currencyFormatter.format(price),
+                    sorter: (a, b) => a.price - b.price,
                 },
                 {
-                    dataIndex: "price",
+                    dataIndex: "value",
                     key: "value",
                     align: "right",
                     title: "Value",
-                    render: (price, record) => record.currencyValueFormatter.format(price*record.amount),
+                    render: (value, record) => record.currencyValueFormatter.format(value),
+                    sorter: (a, b) => a.value - b.value,
                 },
                 {
-                    title: "Value (JPY)"
-                }
+                    dataIndex: "value_jpy",
+                    key: "value_jpy",
+                    align: "right",
+                    title: "Value (JPY)",
+                    render: (value_jpy) => currencyValueFormatter.format(value_jpy),
+                    sorter: (a, b) => a.value_jpy - b.value_jpy,
+                },
+            ]},
+            {title: "Current / Sold", children: [
+                {
+                    dataIndex: "latest_stock_price",
+                    align: "right",
+                    title: "Price",
+                    render: (price, record) => record.currencyFormatter.format(price),
+                    sorter: (a, b) => a.latest_stock_price! - b.latest_stock_price!,
+                },
+                {
+                    dataIndex: "latest_stock_value",
+                    key: "value",
+                    align: "right",
+                    title: "Value",
+                    render: (value, record) => record.currencyValueFormatter.format(value),
+                    sorter: (a, b) => a.latest_stock_value - b.latest_stock_value,
+                },
+                {
+                    dataIndex: "latest_stock_value_jpy",
+                    key: "value_jpy",
+                    align: "right",
+                    title: "Value (JPY)",
+                    render: (value) => currencyValueFormatter.format(value),
+                    sorter: (a, b) => a.value_jpy - b.value_jpy,
+                },
             ]},
             {
-                title: "Current / Sold",
-                children: [
-                    {title: "Date"},
-                    {title: "Price"},
-                    {title: "Value"},
-                    {title: "Dividend"},
-                    {title: "Profit"},
-                ]
-            }
+                dataIndex: "profit_jpy",
+                key: "profit_jpy",
+                align: "right",
+                title: "Profit (JPY)",
+                render: (value) => currencyValueFormatter.format(value),
+                sorter: (a, b) => a.profit_jpy - b.profit_jpy,
+            },
         ]}
     />;
+}
+
+const castAcquiredPrice = (acquiredPrice: number, currency: string): number => {
+    return currency==="JPY" ? 1 : (acquiredPrice||NaN);
 }
 
 export default StockTrades;

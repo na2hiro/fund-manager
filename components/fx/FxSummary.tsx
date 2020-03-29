@@ -3,9 +3,9 @@ import { Table } from "antd";
 import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../../utils/apolloUtils";
 import { currencyValueFormatter, numberFormatter, priceRenderer, valueRenderer } from "../../utils/formatter";
-import { GetSummary, GetSummary_currency_balance, GetSummary_currency_balance_currency_pair } from "../../__generated__/GetSummary";
+import { GetSummary, GetSummary_currency_balance } from "../../__generated__/GetSummary";
 import { FunctionComponent } from "react";
-import { getTradeForCurrency, getTradeForCurrency_currency_trade } from "../../__generated__/getTradeForCurrency";
+import FxTrades from "./FxTrades";
 
 const GET_SUMMARY = gql`
 query GetSummary {
@@ -14,6 +14,7 @@ query GetSummary {
     current_profit
     current_price
     currency_pair {
+      id
       long_currency
       short_currency
     }
@@ -77,79 +78,7 @@ const FxSummary: FunctionComponent<{}> = () => {
                 ]
             },
         ]}
-        expandedRowRender={record => <FxSummaryExpanded currencyPair={record.currency_pair!} />}
-    />
-}
-
-const GET_TRADES_FOR_CURRENCY = gql`
-query getTradeForCurrency($long_currency: String!, $short_currency: String!){
-    currency_trade(
-        where: {currency_pair: {long_currency: {_eq: $long_currency}, short_currency: {_eq: $short_currency}}},
-        order_by: {date: desc}
-    ) {
-        date
-        price
-        amount
-        id
-    }
-}`;
-
-const FxSummaryExpanded: FunctionComponent<{currencyPair: GetSummary_currency_balance_currency_pair}>  = ({currencyPair}) => {
-    const {loading, error, data} = useQuery<getTradeForCurrency>(GET_TRADES_FOR_CURRENCY, {
-        variables: {
-            long_currency: currencyPair.long_currency,
-            short_currency: currencyPair.short_currency,
-        }
-    });
-    return loadingOrError({loading, error}) || <Table
-        bordered
-        size="small"
-        title={() => <>Trades</>}
-        dataSource={data!.currency_trade
-            .map((row: getTradeForCurrency_currency_trade) => ({
-                ...row,
-                id: row.id,
-                currencyFormatter: new Intl.NumberFormat('ja-JP', {
-                    style: "currency",
-                    currency: currencyPair.short_currency,
-                    minimumFractionDigits: 2,
-                }),
-                currencyValueFormatter: new Intl.NumberFormat('ja-JP', {
-                    style: "currency",
-                    currency: currencyPair.short_currency,
-                    minimumFractionDigits: 0,
-                }),
-            }))}
-        columns={[
-            {
-                dataIndex: "date",
-                title: "Date",
-                sorter: (a, b) => a.date < b.date ? -1 : 1,
-                defaultSortOrder: "descend"
-            },
-            {
-                dataIndex: "price",
-                align: "right",
-                title: "Price",
-                render: priceRenderer,
-                sorter: (a, b) => a.price - b.price,
-            },
-            {
-                dataIndex: "amount",
-                align: "right",
-                title: "Amount",
-                render: (number) => numberFormatter.format(number),
-                sorter: (a, b) => a.amount - b.amount,
-            },
-            {
-                dataIndex: "price",
-                key: "value",
-                align: "right",
-                title: "Value",
-                render: (price, record) => record.currencyValueFormatter.format(price*record.amount),
-                sorter: (a, b) => a.amount*a.price - b.amount*b.price,
-            },
-        ]}
+        expandedRowRender={record => <FxTrades currencyPairId={record.currency_pair!.id} />}
     />
 }
 
