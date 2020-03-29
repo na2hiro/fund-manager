@@ -21620,6 +21620,16 @@
             "defaultValue": null
           },
           {
+            "name": "stock",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "stock_order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "stock_id",
             "description": null,
             "type": {
@@ -21789,6 +21799,16 @@
             "defaultValue": null
           },
           {
+            "name": "stock",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "stock_bool_exp",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "stock_id",
             "description": null,
             "type": {
@@ -21935,6 +21955,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "numeric",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "stock",
+            "description": "An object relationship",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "stock",
               "ofType": null
             },
             "isDeprecated": false,
@@ -28123,6 +28155,16 @@
             "defaultValue": null
           },
           {
+            "name": "stock",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "stock_order_by",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "stock_id",
             "description": null,
             "type": {
@@ -28292,6 +28334,16 @@
             "defaultValue": null
           },
           {
+            "name": "stock",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "stock_bool_exp",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "stock_id",
             "description": null,
             "type": {
@@ -28438,6 +28490,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "numeric",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "stock",
+            "description": "An object relationship",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "stock",
               "ofType": null
             },
             "isDeprecated": false,

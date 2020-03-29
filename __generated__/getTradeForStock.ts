@@ -19,6 +19,7 @@ export interface getTradeForStock_stock_trade_stock_stock_market {
 
 export interface getTradeForStock_stock_trade_stock {
   __typename: "stock";
+  id: number;
   effective_currency: string | null;
   name: string;
   /**
