@@ -1,6 +1,7 @@
 import {useEffect, useReducer} from "react";
 import {useApolloClient} from "react-apollo-hooks";
 import {gql} from "apollo-boost";
+import { GetBalancing } from "../__generated__/GetBalancing";
 
 type Diff = DiffRow[];
 type DiffKey = {
@@ -31,7 +32,7 @@ const isBase = (className: string, currencyName: string) => (
 const BASE_CLASS = "Cash / FX";
 const BASE_CURRENCY = "JPY";
 const GET_BALANCING = gql`
-{
+query GetBalancing{
   portfolio_balancing {
     amount
     class
@@ -40,7 +41,7 @@ const GET_BALANCING = gql`
 }`;
 
 const UPSERT_BALANCING = gql`
-mutation ($amount: numeric, $class: String, $currency: String){
+mutation UpsertBalancing($amount: numeric, $class: String, $currency: String){
     insert_portfolio_balancing(objects: {amount: $amount, class: $class, currency: $currency}, on_conflict: {constraint: portfolio_balancing_pkey, update_columns: amount}) {
         returning {
             amount
@@ -109,7 +110,7 @@ const useDiff: () => [Diff, DispatchDiff] = () => {
     }, []);
     useEffect(() => {
         const f = async () => {
-            const {data} = await client.query({
+            const {data} = await client.query<GetBalancing>({
                 query: GET_BALANCING
             });
             dispatch({

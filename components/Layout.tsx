@@ -7,13 +7,14 @@ import queryString from 'query-string';
 import cookie from 'isomorphic-cookie';
 import {FunctionComponent} from "react";
 import { useQuery } from "react-apollo-hooks";
+import { Portfolio } from "../__generated__/Portfolio";
 
 interface Props {
     selectedMenu: string,
 }
 
 const ASSET_BY_CLASS_IN_JPY = gql`
-{
+query Portfolio{
     assets_by_class_in_jpy(limit: 0) {
         name
     }
@@ -51,7 +52,7 @@ const Layout: FunctionComponent<Props> = ({children, selectedMenu}) => {
 };
 
 const LogInOut = () => {
-    const {loading, error, data} = useQuery(ASSET_BY_CLASS_IN_JPY);
+    const {loading, error} = useQuery<Portfolio>(ASSET_BY_CLASS_IN_JPY);
     if (loading) return <></>;
     if (error) {
         const url = `https://dev--f2asibj.auth0.com/login?${queryString.stringify({

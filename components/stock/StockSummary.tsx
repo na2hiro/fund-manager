@@ -1,15 +1,15 @@
-import React from "react";
+import React, { FunctionComponent } from "react";
 import {gql} from "apollo-boost";
 import {Table} from "antd";
 import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../../utils/apolloUtils";
-import { currencyFormatter } from "../../utils/formatter";
+import { numberFormatter, CurrencyFormatterHolder } from "../../utils/formatter";
+import { StockBalance, StockBalance_stock_balance } from "../../__generated__/StockBalance";
 
-const numberFormatter = new Intl.NumberFormat('ja-JP', {
-});
+type Record = StockBalance_stock_balance & CurrencyFormatterHolder;
 
 const STOCK_BALANCE = gql`
-{
+query StockBalance{
   stock_balance {
     stock {
       id
@@ -31,16 +31,16 @@ const STOCK_BALANCE = gql`
   }
 }`;
 const StockSummary = () => {
-    const {loading, error, data} = useQuery(STOCK_BALANCE);
+    const {loading, error, data} = useQuery<StockBalance>(STOCK_BALANCE);
     return loadingOrError({ loading, error }) || <Table
         bordered
         expandRowByClick={true}
         expandedRowRender={record => <StockSummaryExpanded record={record} />}
-        rowKey={(row) => row.stock.id}
-        dataSource={data.stock_balance
-            .map((row: { stock: { stock_market: { currency: any; }; }; }) => ({
+        rowKey={(row) => row.stock!.id}
+        dataSource={data!.stock_balance
+            .map((row: StockBalance_stock_balance) => ({
                 ...row,
-                currencyFormatter: new Intl.NumberFormat('ja-JP', { style: "currency", currency: row.stock.stock_market.currency }),
+                currencyFormatter: new Intl.NumberFormat('ja-JP', { style: "currency", currency: row.stock!.stock_market.currency }),
             }))}
         columns={[
             { dataIndex: ["stock", "name"], align: "right", title: "Name" },
@@ -86,10 +86,10 @@ type Row = {
     }
 }
 
-const StockSummaryExpanded  = ({record}) => {
+const StockSummaryExpanded: FunctionComponent<{record: Record}> = ({record}) => {
     const {loading, error, data} = useQuery(GET_TRADES_FOR_STOCK, {
         variables: {
-            id: record.stock.id
+            id: record.stock!.id
         }
     });
     return loadingOrError({loading, error}) || <Table

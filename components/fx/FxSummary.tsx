@@ -2,20 +2,10 @@ import { gql } from "apollo-boost";
 import { Table } from "antd";
 import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../../utils/apolloUtils";
-import { currencyValueFormatter } from "../../utils/formatter";
-
-// TODO 
-type Record = {
-    currencyFormatter: Intl.NumberFormat;
-    currencyValueFormatter: Intl.NumberFormat;
-    date: string;
-    price: number;
-    amount: number;
-}
-
-const numberFormatter = new Intl.NumberFormat('ja-JP', { });
-const priceRenderer = (price: number, record: Record) => record.currencyFormatter.format(price);
-const valueRenderer = (price: number, record: Record) => record.currencyValueFormatter.format(price);
+import { currencyValueFormatter, numberFormatter, priceRenderer, valueRenderer } from "../../utils/formatter";
+import { GetSummary, GetSummary_currency_balance, GetSummary_currency_balance_currency_pair } from "../../__generated__/GetSummary";
+import { FunctionComponent } from "react";
+import { getTradeForCurrency, getTradeForCurrency_currency_trade } from "../../__generated__/getTradeForCurrency";
 
 const GET_SUMMARY = gql`
 query GetSummary {
@@ -32,28 +22,27 @@ query GetSummary {
   }
 }`;
 
-const FxSummary = () => {
-    const {loading, error, data} = useQuery(GET_SUMMARY);
+const FxSummary: FunctionComponent<{}> = () => {
+    const {loading, error, data} = useQuery<GetSummary>(GET_SUMMARY);
     return loadingOrError({loading, error}) || <Table
         bordered
         expandRowByClick={true}
-        rowKey={(row) => row.currency_pair.long_currency + "_" + row.currency_pair.short_currency}
-        dataSource={data.currency_balance
-            .map((row: { currency_pair: { short_currency: any; }; }) => ({
+        rowKey={(row) => row!.currency_pair!.long_currency + "_" + row!.currency_pair!.short_currency}
+        dataSource={data!.currency_balance
+            .map((row: GetSummary_currency_balance) => ({
                 ...row,
                 currencyFormatter: new Intl.NumberFormat('ja-JP', {
                     style: "currency",
-                    currency: row.currency_pair.short_currency,
+                    currency: row!.currency_pair!.short_currency,
                     minimumFractionDigits: 2,
                 }),
                 currencyValueFormatter: new Intl.NumberFormat('ja-JP', {
                     style: "currency",
-                    currency: row.currency_pair.short_currency,
+                    currency: row!.currency_pair!.short_currency,
                     minimumFractionDigits: 0,
                 }),
             }))}
         summary={pageData =>{
-            console.log("summary")
             let totalValue = 0;
             let totalProfit = 0;
             pageData.forEach(({current_value, current_profit}) => {
@@ -88,7 +77,7 @@ const FxSummary = () => {
                 ]
             },
         ]}
-        expandedRowRender={record => <FxSummaryExpanded record={record} />}
+        expandedRowRender={record => <FxSummaryExpanded currencyPair={record.currency_pair!} />}
     />
 }
 
@@ -105,29 +94,29 @@ query getTradeForCurrency($long_currency: String!, $short_currency: String!){
     }
 }`;
 
-const FxSummaryExpanded  = ({record}) => {
-    const {loading, error, data} = useQuery(GET_TRADES_FOR_CURRENCY, {
+const FxSummaryExpanded: FunctionComponent<{currencyPair: GetSummary_currency_balance_currency_pair}>  = ({currencyPair}) => {
+    const {loading, error, data} = useQuery<getTradeForCurrency>(GET_TRADES_FOR_CURRENCY, {
         variables: {
-            long_currency: record.currency_pair.long_currency,
-            short_currency: record.currency_pair.short_currency,
+            long_currency: currencyPair.long_currency,
+            short_currency: currencyPair.short_currency,
         }
     });
     return loadingOrError({loading, error}) || <Table
         bordered
         size="small"
         title={() => <>Trades</>}
-        dataSource={data.currency_trade
-            .map((row: { id: any; }) => ({
+        dataSource={data!.currency_trade
+            .map((row: getTradeForCurrency_currency_trade) => ({
                 ...row,
                 id: row.id,
                 currencyFormatter: new Intl.NumberFormat('ja-JP', {
                     style: "currency",
-                    currency: record.currency_pair.short_currency,
+                    currency: currencyPair.short_currency,
                     minimumFractionDigits: 2,
                 }),
                 currencyValueFormatter: new Intl.NumberFormat('ja-JP', {
                     style: "currency",
-                    currency: record.currency_pair.short_currency,
+                    currency: currencyPair.short_currency,
                     minimumFractionDigits: 0,
                 }),
             }))}

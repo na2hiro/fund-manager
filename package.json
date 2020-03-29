@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "next",
     "build": "next build",
-    "start": "next start -p $PORT"
+    "start": "next start -p $PORT",
+    "apollo:download": "apollo client:download-schema types/schema.json",
+    "apollo:codegen": "apollo client:codegen --target=typescript --localSchemaFile=types/schema.json --outputFlat"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +36,7 @@
   },
   "devDependencies": {
     "@types/next": "^8.0.6",
-    "@types/react": "^16.8.23"
+    "@types/react": "^16.8.23",
+    "apollo": "^2.25.0"
   }
 }

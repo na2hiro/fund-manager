@@ -8,12 +8,13 @@ import useMemoedPortfolioProps from "../hooks/useMemoedPortfolioProps";
 import useDiff, {Diff, DispatchDiff} from "../hooks/useDiff";
 import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../utils/apolloUtils";
+import { PortfolioOverview } from "../__generated__/PortfolioOverview";
 
 interface Prop {
 }
 
 const PORTFOLIO_OVERVIEW = gql`
-{
+query PortfolioOverview{
   assets_by_class_in_jpy {
     effective_currency
     name
@@ -34,10 +35,10 @@ const PORTFOLIO_OVERVIEW = gql`
 }`;
 
 const Portfolio: FunctionComponent<Prop> = ({}) => {
-    const {loading, error, data} = useQuery(PORTFOLIO_OVERVIEW);
+    const {loading, error, data} = useQuery<PortfolioOverview>(PORTFOLIO_OVERVIEW);
     return <Layout selectedMenu="portfolio">
         <h1>Portfolio</h1>
-        {loadingOrError({loading, error}) || <PortfolioProvider data={data}>
+        {loadingOrError({loading, error}) || <PortfolioProvider data={data!}>
             {({
                 valueMatrix,
                 currencies,
@@ -91,7 +92,7 @@ interface PortfolioProps {
 }
 
 interface Props {
-    data: PortfolioProps;
+    data: PortfolioOverview;
     children: (props: PortfolioProps) => ReactElement;
 }
 

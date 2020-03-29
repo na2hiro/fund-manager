@@ -3,12 +3,15 @@ import { gql } from "apollo-boost";
 import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../../utils/apolloUtils";
 import { Table } from "antd";
+import { GetStockTrades, GetStockTrades_stock_trade } from "../../__generated__/GetStockTrades";
+import { numberFormatter, priceRenderer } from "../../utils/formatter";
 
 const PER_PAGE = 10;
 
 const GET_TRADES = gql`
-query MyQuery ($offset: Int) {
-  stock_trade(limit: ${PER_PAGE}, offset: $offset, order_by: {date: desc}) {
+query GetStockTrades ($offset: Int, $perPage: Int) {
+  stock_trade(limit: $perPage, offset: $offset, order_by: {date: desc}) {
+    id
     amount
     date
     price
@@ -30,9 +33,6 @@ query MyQuery ($offset: Int) {
   }
 }
 `;
-const numberFormatter = new Intl.NumberFormat('ja-JP', { });
-const priceRenderer = (price: number, record: Record) => record.currencyFormatter.format(price);
-const valueRenderer = (price: number, record: Record) => record.currencyValueFormatter.format(price);
 
 // pagination https://ant.design/components/table/#components-table-demo-ajax
 const StockTrades = () => {
@@ -40,9 +40,10 @@ const StockTrades = () => {
     const onChangeTable = useCallback((pagination, filters, sorter) =>{
         setPage(pagination.current);
     }, []);
-    const {loading, error, data} = useQuery(GET_TRADES, {
+    const {loading, error, data} = useQuery<GetStockTrades>(GET_TRADES, {
         variables: {
-            offset: (page-1)*PER_PAGE
+            offset: (page-1)*PER_PAGE,
+            perPage: PER_PAGE
         }
     });
     return loadingOrError({loading, error}) || <Table
@@ -50,12 +51,12 @@ const StockTrades = () => {
         size="small"
         title={() => <>Trades</>}
         pagination={{
-            total: data.stock_trade_aggregate.aggregate.count,
+            total: data!.stock_trade_aggregate.aggregate!.count!,
             current: page
         }}
         onChange={onChangeTable}
-        dataSource={data.stock_trade
-            .map((row: { id: any; }) => ({
+        dataSource={data!.stock_trade
+            .map((row: GetStockTrades_stock_trade) => ({
                 ...row,
                 id: row.id,
                 currencyFormatter: new Intl.NumberFormat('ja-JP', {

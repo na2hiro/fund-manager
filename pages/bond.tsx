@@ -5,6 +5,7 @@ import {Table} from "antd";
 import moment from "moment";
 import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../utils/apolloUtils";
+import { BondTransactions } from "../__generated__/BondTransactions";
 
 const percentFormatter = new Intl.NumberFormat('ja-JP', {
     style: "percent",
@@ -14,7 +15,7 @@ const percentFormatter = new Intl.NumberFormat('ja-JP', {
 const YEAR_IN_MILLIS = 1000 * 60 * 60 * 24 * 365;
 
 const BOND_TRANSACTIONS = gql`
-{
+query BondTransactions{
   bond_trade {
     redemption_date
     purchase_date
@@ -46,13 +47,13 @@ interface Prop {
 }
 
 const Stock: FunctionComponent<Prop> = ({}) => {
-    const {loading, error, data} = useQuery(BOND_TRANSACTIONS);
+    const {loading, error, data} = useQuery<BondTransactions>(BOND_TRANSACTIONS);
     return <Layout selectedMenu="bond">
         <h1>Bond</h1>
         {loadingOrError({loading, error}) || <Table
             bordered
             rowKey={"id"}
-            dataSource={data.bond_trade
+            dataSource={data!.bond_trade
                 .map(row => ({
                     ...row,
                     currencyFormatter: new Intl.NumberFormat('ja-JP', {style: "currency", currency: row.bond.currency}),
