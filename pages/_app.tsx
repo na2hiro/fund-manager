@@ -3,7 +3,7 @@ import cookie from "isomorphic-cookie";
 import {ApolloProvider} from "react-apollo";
 import {ApolloProvider as ApolloHooksProvider} from "react-apollo-hooks";
 import fetch from 'isomorphic-unfetch';
-import {AppComponentType} from "next/app";
+import { FunctionComponent } from "react";
 
 let jwt = cookie.load("jwt"/*, req*/);
 const client = new ApolloClient({
@@ -14,7 +14,7 @@ const client = new ApolloClient({
     }
 });
 
-const App: AppComponentType = ({Component/*, pageProps*/}) => (
+const App: FunctionComponent<{Component: React.ComponentType}> = ({Component/*, pageProps*/}) => (
     <ApolloProvider client={client}>
         <ApolloHooksProvider client={client}>
             <Component />

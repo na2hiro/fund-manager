@@ -11,7 +11,7 @@
     "moduleResolution": "node",
     "noEmit": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "preserveConstEnums": true,
     "removeComments": false,
     "skipLibCheck": true,
@@ -24,7 +24,8 @@
     "isolatedModules": true
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "__generated__"
   ],
   "include": [
     "next-env.d.ts",

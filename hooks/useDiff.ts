@@ -126,8 +126,11 @@ const useDiff: () => [Diff, DispatchDiff] = () => {
 
 export default useDiff;
 
-export {
+export type {
     Diff,
     DispatchDiff,
+}
+
+export {
     isBase,
 }
