@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run build",
     "dev": "next",
     "build": "next build",
     "start": "next start -p $PORT",
@@ -37,6 +37,12 @@
   "devDependencies": {
     "@types/next": "^8.0.6",
     "@types/react": "^16.8.23",
-    "apollo": "^2.25.0"
+    "apollo": "^2.25.0",
+    "husky": "^4.2.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm test"
+    }
   }
 }
