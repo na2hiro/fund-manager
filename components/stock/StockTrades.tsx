@@ -4,7 +4,7 @@ import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../../utils/apolloUtils";
 import { Table } from "antd";
 import { GetStockTrades, GetStockTrades_stock_trade_with_evaluation } from "../../__generated__/GetStockTrades";
-import { numberFormatter, currencyValueFormatter } from "../../utils/formatter";
+import { numberFormatter, currencyValueFormatter, percentageFormatter } from "../../utils/formatter";
 import LinkToChartModal from "../LinkToChartModal";
 
 const PER_PAGE = 10;
@@ -172,6 +172,14 @@ const StockTrades: FunctionComponent<Props> = ({stockId}) => {
                 align: "right",
                 title: "Profit (JPY)",
                 render: (value) => currencyValueFormatter.format(value),
+                sorter: (a, b) => a.profit_jpy - b.profit_jpy,
+            },
+            {
+                dataIndex: "profit_jpy",
+                key: "profit_jpy",
+                align: "right",
+                title: "% (JPY)",
+                render: (value, record) => percentageFormatter.format(value / record.value_jpy),
                 sorter: (a, b) => a.profit_jpy - b.profit_jpy,
             },
         ]}

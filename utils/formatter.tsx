@@ -1,6 +1,6 @@
 
 //Display in JPY only supported
-export const currencyFormatter = new Intl.NumberFormat('ja-JP', {
+export const jpyFormatter = new Intl.NumberFormat('ja-JP', {
     style: 'currency',
     currency: 'JPY'
 });

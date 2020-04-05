@@ -1,5 +1,5 @@
 import {FunctionComponent} from 'react';
-import { percentageFormatter, currencyFormatter } from '../utils/formatter';
+import { percentageFormatter, jpyFormatter } from '../utils/formatter';
 
 interface Props {
     valueMatrix: number[][],
@@ -57,16 +57,16 @@ const PortfolioTable: FunctionComponent<Props> = ({
                     <th>{names[i]}</th>
                     <td>{percentageFormatter.format(classTargetRatios[i])}</td>
                     <td>{percentageFormatter.format(sumsNames[i] / sumAll)}</td>
-                    {row.map((cell, i) => <td key={i}>{currencyFormatter.format(cell)}</td>)}
-                    <td>{currencyFormatter.format(sumsNames[i])}</td>
+                    {row.map((cell, i) => <td key={i}>{jpyFormatter.format(cell)}</td>)}
+                    <td>{jpyFormatter.format(sumsNames[i])}</td>
                 </tr>
             )}
             <tr>
                 <th></th>
                 <td></td>
                 <td></td>
-                {sumsCurrencies.map(sum=><td>{currencyFormatter.format(sum)}</td>)}
-                <td>{currencyFormatter.format(sumAll)}</td>
+                {sumsCurrencies.map(sum=><td>{jpyFormatter.format(sum)}</td>)}
+                <td>{jpyFormatter.format(sumAll)}</td>
             </tr>
             </tbody>
         </table>

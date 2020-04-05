@@ -12,11 +12,11 @@ const Stock: FunctionComponent<Prop> = ({}) => {
     return <Layout selectedMenu="fx">
         <h1>FX</h1>
 
-        <h2>Add trades</h2>
-        <FxInsert />
-
         <h2>Summary</h2>
         <FxSummary />
+
+        <h2>Add trades</h2>
+        <FxInsert />
 
         <h2>Trades</h2>
         <FxTrades />
