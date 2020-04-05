@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {Menu} from 'antd';
-import {PieChartOutlined, StockOutlined, TransactionOutlined, RedEnvelopeOutlined, GoldOutlined, LoginOutlined, LogoutOutlined} from "@ant-design/icons"
+import {PieChartOutlined, StockOutlined, TransactionOutlined, RedEnvelopeOutlined, GoldOutlined, LoginOutlined, LogoutOutlined, AccountBookOutlined} from "@ant-design/icons"
 import 'antd/dist/antd.css';
 import {gql} from "apollo-boost";
 import queryString from 'query-string';
@@ -15,7 +15,7 @@ interface Props {
 
 const ASSET_BY_CLASS_IN_JPY = gql`
 query Portfolio{
-    assets_by_class_in_jpy(limit: 0) {
+    assets_full(limit: 0) {
         name
     }
 }`;
@@ -30,8 +30,9 @@ const Layout: FunctionComponent<Props> = ({children, selectedMenu}) => {
                     <PieChartOutlined />
                     Portfolio
                 </a></Link></Menu.Item>
-                <Menu.Item key="stock"><Link href="/stock"><a><StockOutlined />Stock & ETF</a></Link></Menu.Item>
+                <Menu.Item key="accounts"><Link href="/accounts"><a><AccountBookOutlined />Accounts</a></Link></Menu.Item>
                 <Menu.Item key="fx"><Link href="/fx"><a><TransactionOutlined />Cash / FX</a></Link></Menu.Item>
+                <Menu.Item key="stock"><Link href="/stock"><a><StockOutlined />Stock & ETF</a></Link></Menu.Item>
                 <Menu.Item key="bond"><Link href="/bond"><a><RedEnvelopeOutlined />Bond</a></Link></Menu.Item>
                 <Menu.Item key="commodities" disabled><Link href="/commodities"><a><GoldOutlined />Commodities</a></Link></Menu.Item>
                 <Menu.Item key="loginout" style={{float: "right"}}>

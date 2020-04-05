@@ -30,6 +30,14 @@ query GetStockSummary {
     latest_price
     latest_price_jpy
   }
+  stock_summary_with_evaluation_aggregate {
+    aggregate {
+      sum {
+        latest_value_jpy
+        value_jpy
+      }
+    }
+  }
 }`;
 const StockSummary = () => {
     const {loading, error, data} = useQuery<GetStockSummary>(STOCK_BALANCE);
@@ -43,7 +51,7 @@ const StockSummary = () => {
               const value = row.avg_price*row.amount;
               const value_jpy = row.avg_price_jpy*row.amount;
               const latest_value = (row.latest_price||NaN)*row.amount;
-              const latest_value_jpy = row.latest_price_jpy*row.amount;
+              const latest_value_jpy = (row.latest_price_jpy||NaN)*row.amount;
               const profit = latest_value-value;
               const profit_jpy = latest_value_jpy-value_jpy;
               const profit_jpy_rate = profit_jpy/value_jpy;
@@ -80,15 +88,10 @@ const StockSummary = () => {
                 { dataIndex: "profit_jpy_rate", align: "right", title: "%", render: (rate, record) => percentageFormatter.format(rate) },
             ]},
         ]}
-        summary={pageData =>{
-            let totalValueJpy = 0;
-            let totalLatestValueJpy = 0;
-            let totalProfitJpy = 0;
-            pageData.forEach(({value_jpy, latest_value_jpy, profit_jpy}) => {
-                totalValueJpy+=value_jpy;
-                totalLatestValueJpy+=latest_value_jpy;
-                totalProfitJpy+=profit_jpy;
-            });
+        summary={() =>{
+            let totalValueJpy = data!.stock_summary_with_evaluation_aggregate.aggregate!.sum!.value_jpy;
+            let totalLatestValueJpy = data!.stock_summary_with_evaluation_aggregate.aggregate!.sum!.latest_value_jpy;
+            let totalProfitJpy = totalLatestValueJpy - totalValueJpy;
             return <tr>
                 <th></th>
                 <th style={{textAlign: "right"}}>Total</th>

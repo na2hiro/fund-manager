@@ -3,7 +3,7 @@ import { PortfolioOverview } from "../__generated__/PortfolioOverview";
 
 const useMemoedPortfolioProps = (data: PortfolioOverview) => { // TODO
     const [valueMatrix, currencies, names, sumsCurrencies, sumsNames, currencyTargetRatios, classTargetRatios] = useMemo(() => {
-        const assets = data.assets_by_class_in_jpy;
+        const assets = data.assets_full;
         const currencies = uniq(assets.map((v => v.effective_currency!)));
         const names = uniq(assets.map((v => v.name!)));
 

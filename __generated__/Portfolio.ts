@@ -7,14 +7,14 @@
 // GraphQL query operation: Portfolio
 // ====================================================
 
-export interface Portfolio_assets_by_class_in_jpy {
-  __typename: "assets_by_class_in_jpy";
+export interface Portfolio_assets_full {
+  __typename: "assets_full";
   name: string | null;
 }
 
 export interface Portfolio {
   /**
-   * fetch data from the table: "assets_by_class_in_jpy"
+   * fetch data from the table: "assets_full"
    */
-  assets_by_class_in_jpy: Portfolio_assets_by_class_in_jpy[];
+  assets_full: Portfolio_assets_full[];
 }

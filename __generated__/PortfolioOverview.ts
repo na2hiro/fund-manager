@@ -7,8 +7,8 @@
 // GraphQL query operation: PortfolioOverview
 // ====================================================
 
-export interface PortfolioOverview_assets_by_class_in_jpy {
-  __typename: "assets_by_class_in_jpy";
+export interface PortfolioOverview_assets_full {
+  __typename: "assets_full";
   effective_currency: string | null;
   name: string | null;
   current_value_jpy: any | null;
@@ -38,9 +38,9 @@ export interface PortfolioOverview_class {
 
 export interface PortfolioOverview {
   /**
-   * fetch data from the table: "assets_by_class_in_jpy"
+   * fetch data from the table: "assets_full"
    */
-  assets_by_class_in_jpy: PortfolioOverview_assets_by_class_in_jpy[];
+  assets_full: PortfolioOverview_assets_full[];
   /**
    * fetch aggregated fields from the table: "portfolio"
    */

@@ -47,9 +47,29 @@ export interface GetStockSummary_stock_summary_with_evaluation {
   latest_price_jpy: any | null;
 }
 
+export interface GetStockSummary_stock_summary_with_evaluation_aggregate_aggregate_sum {
+  __typename: "stock_summary_with_evaluation_sum_fields";
+  latest_value_jpy: any | null;
+  value_jpy: any | null;
+}
+
+export interface GetStockSummary_stock_summary_with_evaluation_aggregate_aggregate {
+  __typename: "stock_summary_with_evaluation_aggregate_fields";
+  sum: GetStockSummary_stock_summary_with_evaluation_aggregate_aggregate_sum | null;
+}
+
+export interface GetStockSummary_stock_summary_with_evaluation_aggregate {
+  __typename: "stock_summary_with_evaluation_aggregate";
+  aggregate: GetStockSummary_stock_summary_with_evaluation_aggregate_aggregate | null;
+}
+
 export interface GetStockSummary {
   /**
    * fetch data from the table: "stock_summary_with_evaluation"
    */
   stock_summary_with_evaluation: GetStockSummary_stock_summary_with_evaluation[];
+  /**
+   * fetch aggregated fields from the table: "stock_summary_with_evaluation"
+   */
+  stock_summary_with_evaluation_aggregate: GetStockSummary_stock_summary_with_evaluation_aggregate;
 }

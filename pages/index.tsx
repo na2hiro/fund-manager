@@ -15,7 +15,7 @@ interface Prop {
 
 const PORTFOLIO_OVERVIEW = gql`
 query PortfolioOverview{
-  assets_by_class_in_jpy {
+  assets_full {
     effective_currency
     name
     current_value_jpy
