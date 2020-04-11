@@ -1,7 +1,8 @@
 import {useMemo} from "react";
 import { PortfolioOverview } from "../__generated__/PortfolioOverview";
+import { Diff } from "./useDiff";
 
-const useMemoedPortfolioProps = (data?: PortfolioOverview) => { // TODO
+const useMemoedPortfolioProps = (data: PortfolioOverview | undefined, diff: Diff | null) => {
     const [valueMatrix, currencies, names, sumsCurrencies, sumsNames, currencyTargetRatios, classTargetRatios] = useMemo(() => {
         if(!data) {
             return [
@@ -25,6 +26,12 @@ const useMemoedPortfolioProps = (data?: PortfolioOverview) => { // TODO
             sumsCurrencies[currencies.indexOf(asset.effective_currency!)] += asset.current_value_jpy;
             sumsNames[names.indexOf(asset.name!)] += asset.current_value_jpy;
         });
+        if (diff) {
+            diff.forEach(diffRow => {
+                sumsCurrencies[currencies.indexOf(diffRow.currency)] += diffRow.amount;
+                sumsNames[names.indexOf(diffRow.class)] += diffRow.amount;
+            });
+        }
 
         const sortedCurrencies: string[] = [];
         const sortedSumsCurrencies: number[] = [];
@@ -57,12 +64,17 @@ const useMemoedPortfolioProps = (data?: PortfolioOverview) => { // TODO
         assets.forEach(asset => {
             valueMatrix[sortedNames.indexOf(asset.name!)][sortedCurrencies.indexOf(asset.effective_currency!)] = asset.current_value_jpy
         });
+        if (diff) {
+            diff.forEach(diffRow => {
+                valueMatrix[sortedNames.indexOf(diffRow.class)][sortedCurrencies.indexOf(diffRow.currency)] += diffRow.amount;
+            });
+        }
 
         const currencyTargetRatios = sortedCurrencies.map(currency => (data.currency.nodes.filter(node => node.type==currency)[0] || {}).ratio);
         const classTargetRatios = sortedNames.map(name => (data.class.nodes.filter(node => node.type==name)[0] || {}).ratio);
 
         return [valueMatrix, sortedCurrencies, sortedNames, sortedSumsCurrencies, sortedSumsNames, currencyTargetRatios, classTargetRatios];
-    }, [data]);
+    }, [data, diff]);
 
     const sumAll = useMemo(() => {
         return sumsCurrencies.reduce((a, b) => a + b, 0);

@@ -37,8 +37,9 @@ query PortfolioOverview{
 
 const Portfolio: FunctionComponent<Prop> = ({}) => {
     const {loading, error, data} = useQuery<PortfolioOverview>(PORTFOLIO_OVERVIEW);
-    const {valueMatrix, currencies, names, sumsCurrencies, sumsNames, sumAll, currencyTargetRatios, classTargetRatios} = useMemoedPortfolioProps(data);
     const [diff, dispatchDiff] = useDiff();
+    const {valueMatrix, currencies, names, sumsCurrencies, sumsNames, sumAll, currencyTargetRatios, classTargetRatios} = useMemoedPortfolioProps(data, diff);
+
     return <Layout selectedMenu="portfolio">
         <h1>Portfolio</h1>
         {loadingOrError({loading, error}) || <>
@@ -52,7 +53,7 @@ const Portfolio: FunctionComponent<Prop> = ({}) => {
                 currencyTargetRatios,
                 classTargetRatios
             }}/>
-            <Charts {...{names, currencies, sumsNames, sumsCurrencies}} />
+            <h2>Rebalance plan</h2>
             {diff ? <PortfolioDiffTable {...{
                 diff,
                 dispatchDiff,
@@ -66,6 +67,8 @@ const Portfolio: FunctionComponent<Prop> = ({}) => {
                 )),
             }}/>
             : <Spin />}
+            <h2>Target vs reality</h2>
+            <Charts {...{names, currencies, sumsNames, sumsCurrencies, classTargetRatios, currencyTargetRatios}} />
         </>}
     </Layout>;
 };
