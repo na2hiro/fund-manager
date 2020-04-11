@@ -60,9 +60,9 @@ const push0IfNotExist = (diff: Diff, currency: string, klass: string) => {
     return diff;
 };
 
-const useDiff: () => [Diff, DispatchDiff] = () => {
+const useDiff: () => [Diff | null, DispatchDiff] = () => {
     const client = useApolloClient();
-    const [diff, dispatch] = useReducer((state: Diff, action: Action) => {
+    const [diff, dispatch] = useReducer((state: Diff | null, action: Action) => {
         switch (action.type) {
             case "set":
                 const sum = action.data.reduce((previousValue, currentValue) => previousValue + currentValue.amount, 0);
@@ -74,7 +74,7 @@ const useDiff: () => [Diff, DispatchDiff] = () => {
                 });
                 return diff;
             case "change":
-                const zeroPadded = push0IfNotExist(state.slice(), action.currency, action.class);
+                const zeroPadded = push0IfNotExist((state||[]).slice(), action.currency, action.class);
                 let sumOfBase = 0;
                 const rowUpdated = zeroPadded
                     .filter(diffRow => !isBase(diffRow.class, diffRow.currency))
@@ -107,7 +107,7 @@ const useDiff: () => [Diff, DispatchDiff] = () => {
                 });
                 return state;
         }
-    }, []);
+    }, null);
     useEffect(() => {
         const f = async () => {
             const {data} = await client.query<GetBalancing>({

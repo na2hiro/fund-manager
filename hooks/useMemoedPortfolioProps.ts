@@ -1,8 +1,19 @@
 import {useMemo} from "react";
 import { PortfolioOverview } from "../__generated__/PortfolioOverview";
 
-const useMemoedPortfolioProps = (data: PortfolioOverview) => { // TODO
+const useMemoedPortfolioProps = (data?: PortfolioOverview) => { // TODO
     const [valueMatrix, currencies, names, sumsCurrencies, sumsNames, currencyTargetRatios, classTargetRatios] = useMemo(() => {
+        if(!data) {
+            return [
+                [] as number[][],
+                [] as string[],
+                [] as string[],
+                [] as number[],
+                [] as number[],
+                [] as number[],
+                [] as number[],
+            ];
+        }
         const assets = data.assets_full;
         const currencies = uniq(assets.map((v => v.effective_currency!)));
         const names = uniq(assets.map((v => v.name!)));
