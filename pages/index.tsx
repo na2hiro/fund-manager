@@ -3,14 +3,13 @@ import PortfolioTable from "../components/PortfolioTable";
 import {FunctionComponent} from "react";
 import {gql} from "apollo-boost";
 import Charts from "../components/Charts";
-import PortfolioDiffTable from "../components/PortfolioDiffTable";
 import useMemoedPortfolioProps from "../hooks/useMemoedPortfolioProps";
 import useDiff from "../hooks/useDiff";
 import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../utils/apolloUtils";
 import { PortfolioOverview } from "../__generated__/PortfolioOverview";
-import { Spin } from "antd";
 import useCurrencyFormatterContextAndToggle from "../hooks/useCurrencyFormatterContextAndToggle";
+import Rebalance from "../components/Rebalance";
 
 interface Prop {
 }
@@ -45,6 +44,7 @@ const Portfolio: FunctionComponent<Prop> = ({}) => {
     return <Layout selectedMenu="portfolio">
         <h1>Portfolio</h1>
         {loadingOrError({loading, error}) || <>
+            <Charts {...{names, currencies, sumsNames, sumsCurrencies, classTargetRatios, currencyTargetRatios}} />
             {toggle}
             <PortfolioTable {...{
                 valueMatrix,
@@ -57,8 +57,9 @@ const Portfolio: FunctionComponent<Prop> = ({}) => {
                 classTargetRatios,
                 formatter
             }}/>
-            <h2>Rebalance plan</h2>
-            {diff ? <PortfolioDiffTable {...{
+
+            <h2>Rebalance</h2>
+            <Rebalance {...{
                 diff,
                 dispatchDiff,
                 currencies,
@@ -70,10 +71,7 @@ const Portfolio: FunctionComponent<Prop> = ({}) => {
                     (sumAll * currencyTargetRatios[i]) - sum
                 )),
                 formatter
-            }}/>
-            : <Spin />}
-            <h2>Target vs reality</h2>
-            <Charts {...{names, currencies, sumsNames, sumsCurrencies, classTargetRatios, currencyTargetRatios}} />
+            }} />
         </>}
     </Layout>;
 };

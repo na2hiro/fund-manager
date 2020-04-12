@@ -1,5 +1,6 @@
 import {RadialChart} from 'react-vis';
 import {FunctionComponent} from "react";
+import { percentageFormatter } from '../utils/formatter';
 
 interface Props {
     names: string[],
@@ -42,26 +43,30 @@ interface PieChartWithTargetProps {
     targets: number[],
 }
 
-const PieChartWithTarget: FunctionComponent<PieChartWithTargetProps> = ({ names, sums, targets }) => (
-    <div className="PieChartWithTarget" style={{ height: "300px", width: "300px", "position": "relative" }}>
-        <div style={{ position: "absolute", top: 0, left: 0 }}>
-            <RadialChart
-                data={names.map((name, i) => ({
-                    angle: sums[i],
-                    label: name
-                }))}
-                {...chartConfig}
-            />
+const PieChartWithTarget: FunctionComponent<PieChartWithTargetProps> = ({ names, sums, targets }) => {
+    const visibleNames = names.filter((name, i) => targets[i]>0);
+    return (
+        <div className="PieChartWithTarget" style={{ height: "300px", width: "300px", "position": "relative" }}>
+            <div style={{ position: "absolute", top: 0, left: 0 }}>
+                <RadialChart
+                    data={visibleNames.map((name, i) => ({
+                        angle: sums[i],
+                        label: name
+                    }))}
+                    {...chartConfig}
+                />
+            </div>
+            <div style={{ position: "absolute", top: 0, left: 0 }}>
+                <RadialChart
+                    data={visibleNames.map((name, i) => ({
+                        angle: targets[i],
+                        label: percentageFormatter.format(targets[i])
+                    }))}
+                    {...innerChartConfig}
+                />
+            </div>
         </div>
-        <div style={{ position: "absolute", top: 0, left: 0 }}>
-            <RadialChart
-                data={names.map((name, i) => ({
-                    angle: targets[i],
-                }))}
-                {...innerChartConfig}
-            />
-        </div>
-    </div>
-);
+    );
+};
 
 export default Charts;
