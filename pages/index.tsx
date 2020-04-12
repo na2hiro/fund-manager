@@ -10,6 +10,7 @@ import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../utils/apolloUtils";
 import { PortfolioOverview } from "../__generated__/PortfolioOverview";
 import { Spin } from "antd";
+import useCurrencyFormatterContextAndToggle from "../hooks/useCurrencyFormatterContextAndToggle";
 
 interface Prop {
 }
@@ -39,10 +40,12 @@ const Portfolio: FunctionComponent<Prop> = ({}) => {
     const {loading, error, data} = useQuery<PortfolioOverview>(PORTFOLIO_OVERVIEW);
     const [diff, dispatchDiff] = useDiff();
     const {valueMatrix, currencies, names, sumsCurrencies, sumsNames, sumAll, currencyTargetRatios, classTargetRatios} = useMemoedPortfolioProps(data, diff);
+    const [formatter, toggle] = useCurrencyFormatterContextAndToggle(sumAll);
 
     return <Layout selectedMenu="portfolio">
         <h1>Portfolio</h1>
         {loadingOrError({loading, error}) || <>
+            {toggle}
             <PortfolioTable {...{
                 valueMatrix,
                 currencies,
@@ -51,7 +54,8 @@ const Portfolio: FunctionComponent<Prop> = ({}) => {
                 sumsNames,
                 sumAll,
                 currencyTargetRatios,
-                classTargetRatios
+                classTargetRatios,
+                formatter
             }}/>
             <h2>Rebalance plan</h2>
             {diff ? <PortfolioDiffTable {...{
@@ -65,6 +69,7 @@ const Portfolio: FunctionComponent<Prop> = ({}) => {
                 diffsCurrencies: sumsCurrencies.map((sum, i) => (
                     (sumAll * currencyTargetRatios[i]) - sum
                 )),
+                formatter
             }}/>
             : <Spin />}
             <h2>Target vs reality</h2>

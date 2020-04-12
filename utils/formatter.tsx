@@ -1,28 +1,31 @@
 
 //Display in JPY only supported
-export const jpyFormatter = new Intl.NumberFormat('ja-JP', {
+export const jpyFormatter: Formatter = new Intl.NumberFormat('ja-JP', {
     style: 'currency',
     currency: 'JPY'
 });
 
-export const currencyValueFormatter = new Intl.NumberFormat('ja-JP', {
+export const currencyValueFormatter: Formatter = new Intl.NumberFormat('ja-JP', {
     style: 'currency',
     currency: 'JPY',
     minimumFractionDigits: 0
 });
 
-export const percentageFormatter = new Intl.NumberFormat('ja-JP', {
+export const percentageFormatter: Formatter = new Intl.NumberFormat('ja-JP', {
     style: 'percent',
     minimumFractionDigits: 1
 });
 
 export type CurrencyValueFormatterHolder = {
-    currencyValueFormatter: Intl.NumberFormat;
+    currencyValueFormatter: Formatter;
 }
 export type CurrencyFormatterHolder = {
-    currencyFormatter: Intl.NumberFormat;
+    currencyFormatter: Formatter;
 }
 
+export type Formatter = {
+    format: (amount: number) => string;
+}
 export type FormatterHolder = CurrencyValueFormatterHolder & CurrencyFormatterHolder;
 
 export const numberFormatter = new Intl.NumberFormat('ja-JP', { });

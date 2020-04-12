@@ -1,7 +1,7 @@
 import React, {FunctionComponent} from 'react';
 import {InputNumber} from "antd";
 import {Diff, DispatchDiff} from "../hooks/useDiff";
-import { jpyFormatter } from '../utils/formatter';
+import { Formatter } from '../utils/formatter';
 
 interface Props {
     diff: Diff,
@@ -10,6 +10,7 @@ interface Props {
     names: string[],
     diffsCurrencies: number[],
     diffsNames: number[],
+    formatter: Formatter,
 }
 
 const isBase = (className: string, currencyName: string) => (
@@ -27,6 +28,7 @@ const PortfolioDiffTable: FunctionComponent<Props> = (props) => {
         names,
         diffsCurrencies,
         diffsNames,
+        formatter,
     } = props;
 
     return (
@@ -62,13 +64,13 @@ const PortfolioDiffTable: FunctionComponent<Props> = (props) => {
                                 })
                             }}/>
                     </td>)}
-                    <td>{jpyFormatter.format(diffsNames[i] - diff.filter(d => d.class == names[i]).reduce((previous, current) => previous + current.amount, 0))}</td>
+                    <td>{formatter.format(diffsNames[i] - diff.filter(d => d.class == names[i]).reduce((previous, current) => previous + current.amount, 0))}</td>
                 </tr>
             )}
             <tr>
                 <th></th>
                 {diffsCurrencies.map((diffC, i) => <td>
-                    {jpyFormatter.format(diffC - diff.filter(d => d.currency == currencies[i]).reduce((previous, current) => previous + current.amount, 0))}
+                    {formatter.format(diffC - diff.filter(d => d.currency == currencies[i]).reduce((previous, current) => previous + current.amount, 0))}
                 </td>)}
                 <td></td>
             </tr>
