@@ -1,11 +1,12 @@
 import { FunctionComponent, useState, useCallback } from "react";
-import { Diff, DispatchDiff } from "../hooks/useDiff";
-import { Formatter } from "../utils/formatter";
+import { Diff, DispatchDiff } from "../../hooks/useDiff";
+import { Formatter } from "../../utils/formatter";
 import { Spin, Button, Steps, Result, Popconfirm } from "antd";
 import PortfolioDiffTable from "./PortfolioDiffTable";
 import Link from "next/link";
 import { gql } from "apollo-boost";
 import { useApolloClient } from "react-apollo-hooks";
+import RebalanceTradePlan from "./RebalanceTradePlan";
 
 const {Step} = Steps;
 
@@ -69,6 +70,7 @@ const Rebalance: FunctionComponent<Props> = ({diff, dispatchDiff, currencies, na
                         diffsCurrencies,
                         formatter
                     }} />
+                    <RebalanceTradePlan {...{diff}} />
                     <Popconfirm title="Are you ok to clear the rebalance table?" onConfirm={() => {
                         setStep(3);
                         client.mutate({mutation: CLEAR_BALANCING});

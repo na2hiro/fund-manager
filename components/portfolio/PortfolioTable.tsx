@@ -1,5 +1,5 @@
 import {FunctionComponent} from 'react';
-import { percentageFormatter, Formatter } from '../utils/formatter';
+import { percentageFormatter, Formatter } from '../../utils/formatter';
 
 interface Props {
     valueMatrix: number[][],

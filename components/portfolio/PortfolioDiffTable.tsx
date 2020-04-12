@@ -1,7 +1,7 @@
 import React, {FunctionComponent} from 'react';
 import {InputNumber} from "antd";
-import {Diff, DispatchDiff} from "../hooks/useDiff";
-import { Formatter } from '../utils/formatter';
+import {Diff, DispatchDiff} from "../../hooks/useDiff";
+import { Formatter } from '../../utils/formatter';
 
 interface Props {
     diff: Diff,
@@ -64,13 +64,13 @@ const PortfolioDiffTable: FunctionComponent<Props> = (props) => {
                                 })
                             }}/>
                     </td>)}
-                    <td>{formatter.format(diffsNames[i] - diff.filter(d => d.class == names[i]).reduce((previous, current) => previous + current.amount, 0))}</td>
+                    <td>{formatter.format(diffsNames[i])}</td>
                 </tr>
             )}
             <tr>
                 <th></th>
                 {diffsCurrencies.map((diffC, i) => <td>
-                    {formatter.format(diffC - diff.filter(d => d.currency == currencies[i]).reduce((previous, current) => previous + current.amount, 0))}
+                    {formatter.format(diffC)}
                 </td>)}
                 <td></td>
             </tr>

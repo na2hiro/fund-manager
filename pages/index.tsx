@@ -1,5 +1,5 @@
 import Layout from "../components/Layout";
-import PortfolioTable from "../components/PortfolioTable";
+import PortfolioTable from "../components/portfolio/PortfolioTable";
 import {FunctionComponent} from "react";
 import {gql} from "apollo-boost";
 import Charts from "../components/Charts";
@@ -9,7 +9,7 @@ import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../utils/apolloUtils";
 import { PortfolioOverview } from "../__generated__/PortfolioOverview";
 import useCurrencyFormatterContextAndToggle from "../hooks/useCurrencyFormatterContextAndToggle";
-import Rebalance from "../components/Rebalance";
+import Rebalance from "../components/portfolio/Rebalance";
 
 interface Prop {
 }
