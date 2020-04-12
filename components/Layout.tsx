@@ -5,7 +5,7 @@ import 'antd/dist/antd.css';
 import {gql} from "apollo-boost";
 import queryString from 'query-string';
 import cookie from 'isomorphic-cookie';
-import {FunctionComponent} from "react";
+import {FunctionComponent, useState} from "react";
 import { useQuery } from "react-apollo-hooks";
 import { Portfolio } from "../__generated__/Portfolio";
 
@@ -21,6 +21,7 @@ query Portfolio{
 }`;
 
 const Layout: FunctionComponent<Props> = ({children, selectedMenu}) => {
+    const [loaded, setLoaded] = useState(false);
     return <>
         <header>
         </header>
@@ -36,7 +37,7 @@ const Layout: FunctionComponent<Props> = ({children, selectedMenu}) => {
                 <Menu.Item key="bond"><Link href="/bond"><a><RedEnvelopeOutlined />Bond</a></Link></Menu.Item>
                 <Menu.Item key="commodities" disabled><Link href="/commodities"><a><GoldOutlined />Commodities</a></Link></Menu.Item>
                 <Menu.Item key="loginout" style={{float: "right"}}>
-                    <LogInOut />
+                    <LogInOut onLoad={() => setLoaded(true)} />
                 </Menu.Item>
             </Menu>
         </nav>
@@ -44,7 +45,7 @@ const Layout: FunctionComponent<Props> = ({children, selectedMenu}) => {
             <style jsx>{`
                 main { margin: 15px; }
             `}</style>
-            {children}
+            {loaded && children}
         </main>
         <footer>
             <a href="https://github.com/na2hiro/fund-manager">fund-manager by na2hiro</a>
@@ -52,7 +53,11 @@ const Layout: FunctionComponent<Props> = ({children, selectedMenu}) => {
     </>
 };
 
-const LogInOut = () => {
+interface LogInOutProps {
+    onLoad: () => void
+}
+
+const LogInOut: FunctionComponent<LogInOutProps> = ({onLoad}) => {
     const {loading, error} = useQuery<Portfolio>(ASSET_BY_CLASS_IN_JPY);
     if (loading) return <></>;
     if (error) {
@@ -70,12 +75,13 @@ const LogInOut = () => {
                 e.stopPropagation();
                 location.href = url;
             }}><LoginOutlined />Log in</a>
-    } else {
-        return <a href="#" onClick={() => {
-            cookie.remove("jwt");
-            location.href = "/";
-        }}><LogoutOutlined />Log out</a>
     }
+
+    onLoad();
+    return <a href="#" onClick={() => {
+        cookie.remove("jwt");
+        location.href = "/";
+    }}><LogoutOutlined />Log out</a>
 }
 
 export default Layout;

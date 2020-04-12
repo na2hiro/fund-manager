@@ -4,7 +4,7 @@ import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../../utils/apolloUtils";
 import { Table } from "antd";
 import { GetStockTrades, GetStockTrades_stock_trade_with_evaluation } from "../../__generated__/GetStockTrades";
-import { numberFormatter, currencyValueFormatter, percentageFormatter } from "../../utils/formatter";
+import { numberFormatter, jpyFormatter, percentageFormatter } from "../../utils/formatter";
 import LinkToChartModal from "../LinkToChartModal";
 
 const PER_PAGE = 10;
@@ -137,7 +137,7 @@ const StockTrades: FunctionComponent<Props> = ({stockId}) => {
                     key: "value_jpy",
                     align: "right",
                     title: "Value (JPY)",
-                    render: (value_jpy) => currencyValueFormatter.format(value_jpy),
+                    render: (value_jpy) => jpyFormatter.format(value_jpy),
                     sorter: (a, b) => a.value_jpy - b.value_jpy,
                 },
             ]},
@@ -162,7 +162,7 @@ const StockTrades: FunctionComponent<Props> = ({stockId}) => {
                     key: "value_jpy",
                     align: "right",
                     title: "Value (JPY)",
-                    render: (value) => currencyValueFormatter.format(value),
+                    render: (value) => jpyFormatter.format(value),
                     sorter: (a, b) => a.value_jpy - b.value_jpy,
                 },
             ]},
@@ -171,7 +171,7 @@ const StockTrades: FunctionComponent<Props> = ({stockId}) => {
                 key: "profit_jpy",
                 align: "right",
                 title: "Profit (JPY)",
-                render: (value) => currencyValueFormatter.format(value),
+                render: (value) => jpyFormatter.format(value),
                 sorter: (a, b) => a.profit_jpy - b.profit_jpy,
             },
             {

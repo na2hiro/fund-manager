@@ -39,7 +39,7 @@ query PortfolioOverview{
 const Portfolio: FunctionComponent<Prop> = ({}) => {
     const {loading, error, data} = useQuery<PortfolioOverview>(PORTFOLIO_OVERVIEW);
     const [diff, dispatchDiff] = useDiff();
-    const {valueMatrix, currencies, names, sumsCurrencies, sumsNames, sumAll, currencyTargetRatios, classTargetRatios} = useMemoedPortfolioProps(data, diff);
+    const {valueMatrix, currencies, names, sumsCurrencies, sumsNames, sumAll, currencyTargetRatios, classTargetRatios} = useMemoedPortfolioProps(error ? undefined : data, diff);
     const [formatter, toggle] = useCurrencyFormatterContextAndToggle(sumAll);
 
     return <Layout selectedMenu="portfolio">

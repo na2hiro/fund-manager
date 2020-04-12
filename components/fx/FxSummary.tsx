@@ -2,7 +2,7 @@ import { gql } from "apollo-boost";
 import { Table } from "antd";
 import { useQuery } from "react-apollo-hooks";
 import { loadingOrError } from "../../utils/apolloUtils";
-import { currencyValueFormatter, numberFormatter, priceRenderer, valueRenderer, percentageFormatter } from "../../utils/formatter";
+import { jpyFormatter, numberFormatter, priceRenderer, valueRenderer, percentageFormatter } from "../../utils/formatter";
 import { GetSummary, GetSummary_currency_balance } from "../../__generated__/GetSummary";
 import { FunctionComponent } from "react";
 import FxTrades from "./FxTrades";
@@ -57,8 +57,8 @@ const FxSummary: FunctionComponent<{}> = () => {
                 <th></th>
                 <th></th>
                 <th></th>
-                <th style={{textAlign: "right"}}>{currencyValueFormatter.format(totalValue)}</th>
-                <th style={{textAlign: "right"}}>{currencyValueFormatter.format(totalProfit)}</th>
+                <th style={{textAlign: "right"}}>{jpyFormatter.format(totalValue)}</th>
+                <th style={{textAlign: "right"}}>{jpyFormatter.format(totalProfit)}</th>
                 <th style={{textAlign: "right"}}>{percentageFormatter.format(totalProfit / totalValue)}</th>
             </tr>
         }}

@@ -2,13 +2,8 @@
 //Display in JPY only supported
 export const jpyFormatter: Formatter = new Intl.NumberFormat('ja-JP', {
     style: 'currency',
-    currency: 'JPY'
-});
-
-export const currencyValueFormatter: Formatter = new Intl.NumberFormat('ja-JP', {
-    style: 'currency',
     currency: 'JPY',
-    minimumFractionDigits: 0
+    minimumFractionDigits: 0,
 });
 
 export const percentageFormatter: Formatter = new Intl.NumberFormat('ja-JP', {
